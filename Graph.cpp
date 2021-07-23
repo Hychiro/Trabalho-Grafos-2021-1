@@ -77,7 +77,6 @@ bool Graph::getWeightedNode()
     return this->weighted_node;
 }
 
-
 Node *Graph::getFirstNode()
 {
 
@@ -95,66 +94,97 @@ Node *Graph::getLastNode()
     The outdegree attribute of nodes is used as a counter for the number of edges in the graph.
     This allows the correct updating of the numbers of edges in the graph being directed or not.
 */
+
+//implementacao abaixo:
 void Graph::insertNode(int id)
 {
-    
+    Node *p = new Node(id);
+
+    p->setNextNode(nullptr);
+    if (first_node == nullptr)
+    {
+        first_node = p;
+    }
+    else
+    {
+        last_node->setNextNode(p);
+    }
+    last_node = p;
 }
 
 void Graph::insertEdge(int id, int target_id, float weight)
 {
-
-    
+    if(searchNode(id)){
+        Node* p = getNode(id);
+        p->insertEdge(target_id,weight);
+    }
 }
 
-void Graph::removeNode(int id){ 
-    
+void Graph::removeNode(int id)
+{
+
 }
 
 bool Graph::searchNode(int id)
 {
-    
+    Node *p = first_node;
+    int i = 0;
+    while (i < id && p != NULL)
+    {
+        i++;
+        p = p->getNextNode();
+    }
+    if (p != nullptr)
+    {
+        return true;
+    }
+    return false;
 }
 
 Node *Graph::getNode(int id)
 {
-
-    
+    Node *p = first_node;
+    int i = 0;
+    if (searchNode(id))
+    {
+        while (i < id)
+        {
+            i++;
+            p = p->getNextNode();
+        }
+        return p;
+    }
 }
-
 
 //Function that prints a set of edges belongs breadth tree
 
-void Graph::breadthFirstSearch(ofstream &output_file){
-    
+void Graph::breadthFirstSearch(ofstream &output_file)
+{
 }
 
-
-
-float Graph::floydMarshall(int idSource, int idTarget){
-    
+float Graph::floydMarshall(int idSource, int idTarget)
+{
 }
 
-   
-
-float Graph::dijkstra(int idSource, int idTarget){
-    
+float Graph::dijkstra(int idSource, int idTarget)
+{
 }
 
 //function that prints a topological sorting
-void topologicalSorting(){
-
+void topologicalSorting()
+{
 }
 
-void breadthFirstSearch(ofstream& output_file){
-
+void breadthFirstSearch(ofstream &output_file)
+{
 }
-Graph* getVertexInduced(int* listIdNodes){
-
+Graph *getVertexInduced(int *listIdNodes)
+{
 }
 
-Graph* agmKuskal(){
-
+Graph *agmKuskal()
+{
 }
-Graph* agmPrim(){
-
+Graph *agmPrim()
+{
 }
