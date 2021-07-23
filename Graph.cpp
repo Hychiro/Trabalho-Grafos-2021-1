@@ -122,7 +122,27 @@ void Graph::insertEdge(int id, int target_id, float weight)
 
 void Graph::removeNode(int id)
 {
-
+Node* p;
+	if(last_node != nullptr)
+	{
+		if(first_node == last_node)
+		{
+			first_node = nullptr;
+			p = nullptr;
+		}
+		else
+		{
+			p = first_node;
+			while(p->getNextNode() != last_node)
+				p = p->getNextNode();
+			p->setNextNode(nullptr);
+		}
+		delete last_node;
+		last_node = p;
+		order--;
+	}
+	else
+		cout << "ERRO: o grafo esta vazio!" << endl;
 }
 
 bool Graph::searchNode(int id)
