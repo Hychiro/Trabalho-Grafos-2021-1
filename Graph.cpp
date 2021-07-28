@@ -188,6 +188,64 @@ float Graph::floydMarshall(int idSource, int idTarget)
 
 float Graph::dijkstra(int idSource, int idTarget)
 {
+    int dist[this.order];//vetor que diz a distancia de um vértice até todos os outos.
+	bool visitados[this.order];//vetor que verifica se o vértice ja foi visitado
+
+
+   /*
+    Fazer uma fila de prioridade. (priority_queue)????
+    a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????) 
+    e o segundo valor seja o vetor (inteiro ou node???)
+   */
+    priority_queue < pair<int, Node>, vector<pair<int,Node> >,greater<pair<int,Node> > > fila;
+
+    //Iniciar todas as distancias como inifinito
+    for (int i=0; i < this.order;i++)
+    {
+        dist[i] = INFINITY;   
+        visitados[i] = false;
+    }
+
+
+    dist[idSource] = 0;//Distancia do vertice inicial até ele mesmo é 0
+
+    //inserir o vertice inicial na fila
+    fila.push(make_pair(dist[idSource],this->getNode(idSource)));
+
+    //iteraçao
+    while(!fila.empty())
+    {
+        pair<int, Node> p=fila.top();//copia par (vertice e distancia) do topo
+        Node u = p.second;//obtem o vértice copiado no passo anterior, (deveria ser do tipo Node???)
+        fila.pop(); //remove da fila
+
+        //verifica se o vértice ja foi visitado
+        if(visitados[u->getid()] == false)
+        {
+            //marca como visitado
+            visitados[u->getid()] = true;
+
+
+            ----// percorre os vértices "v" adjacentes de "u"
+            for(Edge* it = u->getFirstEdge();it!=nullptr;it = it->next_edge)
+            {
+                -----//obtém o vertice adjancente e o custa da aresta
+                int v = it->getTargetId();
+                int custo_aresta = it->getWeight();
+
+                -----//verificar se a dist[v] é maior que a distancia de dist[u] + o custa da aresta
+                if(dist[v] > (dist[u] + custo_aresta))
+                {
+                    //atualiza a distancia de "v" e insere na fila
+                    dist[v] = dist[u] + custo_aresta;
+                    fila.push(make_pair(dist[v], getNode(v)));
+
+                }
+            }
+        }
+    }
+
+    return dist[idSource];
 }
 
 //function that prints a topological sorting
