@@ -248,7 +248,8 @@ float Graph::floydMarshall(int idSource, int idTarget)
 
 float Graph::dijkstra(int idSource, int idTarget)
 {
-    int dist[this->order];       //vetor que diz a distancia de um vértice até todos os outos.
+    int distancia[this->order]; 
+    int vertice_predecessor[this->order];       //matriz que diz o caminho de um vértice até todos os outos.
     bool visitados[this->order]; //vetor que verifica se o vértice ja foi visitado
 
     /*
@@ -256,52 +257,55 @@ float Graph::dijkstra(int idSource, int idTarget)
     a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????) 
     e o segundo valor seja o vetor (inteiro ou node???)
    */
-    priority_queue<pair<int, Node>, vector<pair<int, Node>>, greater<pair<int, Node>>> fila;
+    priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> fila;
 
     //Iniciar todas as distancias como inifinito
     for (int i = 0; i < this->order; i++)
     {
-        dist[i] = INFINITY;
+        distancia[this->order]=INFINITY;
         visitados[i] = false;
+        vertice_predecessor[i]=-1;
     }
 
-    dist[idSource] = 0; //Distancia do vertice inicial até ele mesmo é 0
+    distancia[idSource] = 0; //Distancia do vertice inicial até ele mesmo é 0
+         vertice_predecessor[idSource]=-1;
 
     //inserir o vertice inicial na fila
-    fila.push(make_pair(dist[idSource], this->getNode(idSource)));
+    fila.push(make_pair(distancia[idSource], this->getNode(idSource)));
 
     //iteraçao
     while (!fila.empty())
     {
-        pair<int, Node *> p = fila.top(); //copia par (vertice e distancia) do topo
-        Node *u = p.second;               //obtem o vértice copiado no passo anterior, (deveria ser do tipo Node???)
+        pair<int, Node *> distancia_no = fila.top(); //copia par (vertice e distancia) do topo
+        Node *no_analisado = distancia_no.second;               //obtem o vértice copiado no passo anterior, (deveria ser do tipo Node???)
         fila.pop();                       //remove da fila
 
         //verifica se o vértice ja foi visitado
-        if (visitados[u->getId()] == false)
+        if (visitados[no_analisado->getId()] == false)
         {
             //marca como visitado
-            visitados[u->getId()] = true;
+            visitados[no_analisado->getId()] = true;
 
             // percorre os vértices "v" adjacentes de "u"
-            for (Edge *it = u->getFirstEdge(); it != nullptr; it = it->getNextEdge())
+            for (Edge *it = no_analisado->getFirstEdge(); it != nullptr; it = it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
-                int v = it->getTargetId();
+                int verticeAdjacente = it->getTargetId();
                 int custo_aresta = it->getWeight();
 
                 //verificar se a dist[v] é maior que a distancia de dist[u] + o custa da aresta
-                if (dist[v] > (dist[u->getId()] + custo_aresta))
+                if (distancia[verticeAdjacente] > (distancia[no_analisado->getId()] + custo_aresta))
                 {
                     //atualiza a distancia de "v" e insere na fila
-                    dist[v] = dist[u->getId()] + custo_aresta;
-                    fila.push(make_pair(dist[v], getNode(v)));
+                    distancia[verticeAdjacente] = distancia[no_analisado->getId()] + custo_aresta;
+                    vertice_predecessor[verticeAdjacente] = no_analisado->getId();
+                    fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
                 }
             }
         }
     }
 
-    return dist[idSource];
+    return 0;
 }
 
 //function that prints a topological sorting
