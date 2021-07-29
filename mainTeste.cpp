@@ -9,12 +9,16 @@
 #include <chrono>
 #include "Graph.h"
 #include "Node.h"
+#include "Edge.h"
+#include "Graph.cpp"
+#include "Node.cpp"
+#include "Edge.cpp"
 
 int main(){
     ofstream output_file;
-    output_file.open("C://Users//Usuario//Documents//Ufjf//Grafos//Trabalho-Grafos-2021-1//teste.txt");
+    output_file.open("C://Users//Usuario//Documents//Ufjf//Grafos//testes.txt");
     
-    Graph* grafo = new Graph(4,0,0,0);
+    Graph* grafo = new Graph(4,false,false,false);
     grafo->insertEdge(1,2,0);
     grafo->insertEdge(2,1,0);
     grafo->insertEdge(1,4,0);

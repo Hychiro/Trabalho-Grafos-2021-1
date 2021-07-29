@@ -1,6 +1,7 @@
 CPP    = g++
 RM     = rm -f
-OBJS   = Edge.o \
+OBJS   = mainTeste.o \
+         Edge.o \
          Graph.o \
          main.o \
          Node.o
@@ -20,6 +21,9 @@ clean-after:
 
 Projeto.exe: $(OBJS)
 	$(CPP) -Wall -s -o $@ $(OBJS) $(LIBS)
+
+mainTeste.o: mainTeste.cpp Graph.h Node.h Edge.h Graph.cpp Node.cpp Edge.cpp
+	$(CPP) -Wall -s -c $< -o $@ $(CFLAGS)
 
 Edge.o: Edge.cpp Edge.h
 	$(CPP) -Wall -s -c $< -o $@ $(CFLAGS)

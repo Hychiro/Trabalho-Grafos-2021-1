@@ -11,7 +11,7 @@ using namespace std;
 Edge::Edge(int target_id){
 
     this->target_id = target_id;
-    this->next_edge = nullptr;
+    this->next_edge = NULL;
     this->weight = 0;
 
 }
@@ -19,9 +19,9 @@ Edge::Edge(int target_id){
 // Destructor
 Edge::~Edge(){
 
-    if (this->next_edge != nullptr){
+    if (this->next_edge != NULL){
         delete this->next_edge;
-        this->next_edge = nullptr;
+        this->next_edge = NULL;
     }
 
 }

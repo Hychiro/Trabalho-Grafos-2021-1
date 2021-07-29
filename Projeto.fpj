@@ -14,12 +14,13 @@
 	<CompilerType Value="CPP"/>
 	<AppType Value="CONSOLE"/>
 	<Files>
+		<File Name="mainTeste.cpp"/>
+		<File Name="Node.h"/>
 		<File Name="Edge.h"/>
 		<File Name="Edge.cpp"/>
 		<File Name="Graph.cpp"/>
 		<File Name="Graph.h"/>
 		<File Name="main.cpp"/>
 		<File Name="Node.cpp"/>
-		<File Name="Node.h"/>
 	</Files>
 </Project>

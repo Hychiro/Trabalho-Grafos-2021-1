@@ -26,7 +26,7 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->directed = directed;
     this->weighted_edge = weighted_edge;
     this->weighted_node = weighted_node;
-    this->first_node = this->last_node = nullptr;
+    this->first_node = this->last_node = NULL;
     this->number_edges = 0;
     //inserindo os nos
     for (int i = 1; i <= this->order; i++)
@@ -41,7 +41,7 @@ Graph::~Graph()
 
     Node *next_node = this->first_node;
 
-    while (next_node != nullptr)
+    while (next_node != NULL)
     {
 
         next_node->removeAllEdges();
@@ -105,8 +105,8 @@ void Graph::insertNode(int id)
 {
     // so cria o no e deixa ele no espaço
     Node *p = new Node(id);
-    p->setNextNode(nullptr);
-    if (first_node == nullptr)
+    p->setNextNode(NULL);
+    if (first_node == NULL)
     {
         first_node = p;
     }
@@ -143,12 +143,12 @@ void Graph::insertEdge(int id, int target_id, float weight)
 void Graph::removeNode(int id) // pfv dps me ajudem a revisar esse removeNode
 {
     Node *p;
-    if (this->last_node != nullptr)
+    if (this->last_node != NULL)
     {
         if (this->first_node == this->last_node)
         {
-            this->first_node = nullptr;
-            p = nullptr;
+            this->first_node = NULL;
+            p = NULL;
         }
         else
         {
@@ -166,16 +166,16 @@ void Graph::removeNode(int id) // pfv dps me ajudem a revisar esse removeNode
             nextN = p->getNextNode();
 
             previousN->setNextNode(nextN);
-            if (previousN->getNextNode() == nullptr)
+            if (previousN->getNextNode() == NULL)
             {
                 last_node = previousN;
             }
             // dps arrumar pra ser algo mais bonito, usando  remove edge, q eu n sei usar...
             if (directed)
             { /* sei implementa esse n...
-                for (Node *i = first_node; i != nullptr; i->getNextNode())
+                for (Node *i = first_node; i != NULL; i->getNextNode())
                 {
-                    for (Edge *k = p->getFirstEdge(); k != nullptr; k->getNextEdge())
+                    for (Edge *k = p->getFirstEdge(); k != NULL; k->getNextEdge())
                     {
                         
                         
@@ -185,10 +185,10 @@ void Graph::removeNode(int id) // pfv dps me ajudem a revisar esse removeNode
             }
             else
             {
-                for (Node *i = first_node; i != nullptr; i->getNextNode())
+                for (Node *i = first_node; i != NULL; i->getNextNode())
                 {
                     Edge *k = i->getFirstEdge();
-                    while (k != nullptr)
+                    while (k != NULL)
                     {
                         sup = k;
                         k->getNextEdge();
@@ -196,14 +196,14 @@ void Graph::removeNode(int id) // pfv dps me ajudem a revisar esse removeNode
                         if (k->getTargetId() == p->getId())
                         {
                             sup->setNextEdge(k->getNextEdge());
-                            k = nullptr;
+                            k = NULL;
                             k = sup->getNextEdge();
                         }
                     }
                 }
             }
             p->removeAllEdges();
-            p = nullptr;
+            p = NULL;
         }
         order--;
     }
@@ -215,11 +215,11 @@ bool Graph::searchNode(int id)
 {
     // so verifica se exste o no ali ou nao
     Node *p = first_node;
-    while (p->getId() != id && p != nullptr)
+    while (p->getId() != id && p != NULL)
     {
         p = p->getNextNode();
     }
-    if (p != nullptr)
+    if (p != NULL)
     {
         return true;
     }
@@ -232,7 +232,7 @@ Node *Graph::getNode(int id)
     Node *p = first_node;
     if (searchNode(id))
     {
-        while (p != nullptr && p->getId() != id)
+        while (p != NULL && p->getId() != id)
         {
             p = p->getNextNode();
         }
@@ -241,7 +241,7 @@ Node *Graph::getNode(int id)
 }
 
 //Function that prints a set of edges belongs breadth tree
-
+/*
 float Graph::floydMarshall(int idSource, int idTarget)
 {
 }
@@ -252,11 +252,11 @@ float Graph::dijkstra(int idSource, int idTarget)
     int vertice_predecessor[this->order];       //matriz que diz o caminho de um vértice até todos os outos.
     bool visitados[this->order]; //vetor que verifica se o vértice ja foi visitado
 
-    /*
-    Fazer uma fila de prioridade. (priority_queue)????
-    a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????) 
-    e o segundo valor seja o vetor (inteiro ou node???)
-   */
+    
+    //Fazer uma fila de prioridade. (priority_queue)????
+    //a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????) 
+    //e o segundo valor seja o vetor (inteiro ou node???)
+   
     priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> fila;
 
     //Iniciar todas as distancias como inifinito
@@ -287,7 +287,7 @@ float Graph::dijkstra(int idSource, int idTarget)
             visitados[no_analisado->getId()] = true;
 
             // percorre os vértices "v" adjacentes de "u"
-            for (Edge *it = no_analisado->getFirstEdge(); it != nullptr; it = it->getNextEdge())
+            for (Edge *it = no_analisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
                 int verticeAdjacente = it->getTargetId();
@@ -312,6 +312,7 @@ float Graph::dijkstra(int idSource, int idTarget)
 void topologicalSorting()
 {
 }
+*/
 void Graph::deepthFirstSearch(ofstream &output_file, int targetedId)
 {
     int i = 0;
@@ -356,7 +357,7 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
         }
 
         //faz a leitura pra direita da lista de aresta,
-        if (aux != nullptr)
+        if (aux != NULL)
         {
             Node *sup = p;
             p = getNode(aux->getTargetId());
@@ -377,6 +378,7 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
         return i;
     }
 }
+
 Graph *getVertexInduced(int *listIdNodes)
 {
 }
@@ -384,6 +386,7 @@ Graph *getVertexInduced(int *listIdNodes)
 Graph *agmKuskal()
 {
 }
+
 Graph *agmPrim()
 {
 }
