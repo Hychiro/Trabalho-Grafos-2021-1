@@ -50,7 +50,7 @@ class Graph{
         Graph* agmKuskal();
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
-        float dijkstra(int idSource, int idTarget);
+        void dijkstra(int idSource, int idTarget);
 
         //methods phase1
         float greed();

@@ -246,10 +246,10 @@ float Graph::floydMarshall(int idSource, int idTarget)
 {
 }
 
-float Graph::dijkstra(int idSource, int idTarget)
+void Graph::dijkstra(int idSource, int idTarget)
 {
     int distancia[this->order]; 
-    int vertice_predecessor[this->order];       //matriz que diz o caminho de um vértice até todos os outos.
+    int vertice_predecessor[this->order];       
     bool visitados[this->order]; //vetor que verifica se o vértice ja foi visitado
 
     /*
@@ -277,35 +277,44 @@ float Graph::dijkstra(int idSource, int idTarget)
     while (!fila.empty())
     {
         pair<int, Node *> distancia_no = fila.top(); //copia par (vertice e distancia) do topo
-        Node *no_analisado = distancia_no.second;               //obtem o vértice copiado no passo anterior, (deveria ser do tipo Node???)
+        Node *verticeAnalisado = distancia_no.second;               //obtem o vértice copiado no passo anterior, (deveria ser do tipo Node???)
         fila.pop();                       //remove da fila
 
         //verifica se o vértice ja foi visitado
-        if (visitados[no_analisado->getId()] == false)
+        if (visitados[verticeAnalisado->getId()] == false)
         {
             //marca como visitado
-            visitados[no_analisado->getId()] = true;
+            visitados[verticeAnalisado->getId()] = true;
 
-            // percorre os vértices "v" adjacentes de "u"
-            for (Edge *it = no_analisado->getFirstEdge(); it != nullptr; it = it->getNextEdge())
+            // percorre os vértices adjacentes  do vertice analisado
+            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
                 int verticeAdjacente = it->getTargetId();
                 int custo_aresta = it->getWeight();
 
-                //verificar se a dist[v] é maior que a distancia de dist[u] + o custa da aresta
-                if (distancia[verticeAdjacente] > (distancia[no_analisado->getId()] + custo_aresta))
+                //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
+                if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId()] + custo_aresta))
                 {
-                    //atualiza a distancia de "v" e insere na fila
-                    distancia[verticeAdjacente] = distancia[no_analisado->getId()] + custo_aresta;
-                    vertice_predecessor[verticeAdjacente] = no_analisado->getId();
+                    //atualiza a distancia do vertice Adjacente e insere na fila
+                    distancia[verticeAdjacente] = distancia[verticeAnalisado->getId()] + custo_aresta;
+                    vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
                     fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
                 }
             }
         }
     }
+    
+    
 
-    return 0;
+    std::list<int> caminho;
+for(int i=idTarget;vertice_predecessor[i] != -1; i=vertice_predecessor[i])
+{
+    caminho.push_front(i);
+}
+
+
+
 }
 
 //function that prints a topological sorting
