@@ -323,13 +323,7 @@ void Graph::deepthFirstSearch(ofstream &output_file, int targetedId)
     }
 
     i = auxDeepthFirstSearch(output_file, first_node, verify, i, targetedId);
-    for (int t = 0; t < getOrder(); t++)
-    {
-        if(verify[t]){
-            output_file << t+1 << ", ";
-        }
-    }
-    output_file << endl;
+      output_file << first_node->getId() << endl;
 }
 
 int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], int i, int targetedId)
@@ -337,6 +331,7 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
     // retorna o valor de i, para quando achar o no,
     if (p->getId() == targetedId)
     {
+        output_file << p->getId() << ", ";
         verify[first_node->getId() - 1] = true;
         return i;
     }
@@ -378,6 +373,7 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
         {
             return i;
         }
+        output_file << p->getId() << ", ";
         return i;
     }
 }
