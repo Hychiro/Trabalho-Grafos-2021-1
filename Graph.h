@@ -43,9 +43,9 @@ class Graph{
         bool searchNode(int id);
         Node* getNode(int id);
 
-        //methods phase1
         void topologicalSorting();
-        void breadthFirstSearch(ofstream& output_file);
+        void deepthFirstSearch(ofstream& output_file, int id);
+        int auxDeepthFirstSearch(ofstream &output_file, Node* p, bool verify[], int i, int targetId);
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();

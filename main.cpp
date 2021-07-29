@@ -224,7 +224,7 @@ int main(int argc, char const *argv[]) {
     input_file.open(argv[1], ios::in);
     output_file.open(argv[2], ios::out | ios::trunc);
 
-
+    
 
     Graph* graph;
 
