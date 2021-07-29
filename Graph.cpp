@@ -319,6 +319,12 @@ void Graph::deepthFirstSearch(ofstream &output_file, int targetedId)
     }
 
     i = auxDeepthFirstSearch(output_file, first_node, verify, i, targetedId);
+    for (int t = 0; t < getOrder(); t++)
+    {
+        if(verify[t]){
+            output_file << t+1 << ", ";
+        }
+    }
     output_file << endl;
 }
 
@@ -328,7 +334,6 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
     if (p->getId() == targetedId)
     {
         verify[first_node->getId() - 1] = true;
-        output_file << p->getId() << ", ";
         return i;
     }
     // retorna o valor de i, para quando chegar em um ponto sem volta,
@@ -369,7 +374,6 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
         {
             return i;
         }
-        output_file << p->getId() << ", ";
         return i;
     }
 }
