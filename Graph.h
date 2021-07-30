@@ -51,7 +51,7 @@ class Graph{
         Graph* agmKuskal();
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
-        void dijkstra(ofstream &output_fileint,int idSource, int idTarget);
+        void dijkstra(ofstream &output_file,int idSource, int idTarget);
         void printGraph(ofstream &output_file);
         //methods phase1
         float greed();

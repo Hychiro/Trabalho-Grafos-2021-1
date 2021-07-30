@@ -51,7 +51,6 @@ Graph::~Graph()
 
 void Graph::printGraph(ofstream &output_file)
 {
-    output_file <<"Ordem grafo: " << this->order << endl;
     Node *p = this->first_node;
     Edge *aux = p->getFirstEdge();
     output_file << "Printano o Grafo" << endl;
@@ -59,7 +58,6 @@ void Graph::printGraph(ofstream &output_file)
     {
 
         aux = p->getFirstEdge();
-        
         while (aux != NULL)
         {
 
@@ -78,11 +76,8 @@ int Graph::getOrder()
 }
 int Graph::getNumberEdges()
 {
-    if(directed){
+
     return this->number_edges;
-}else{
-    return this->number_edges/2;
-}
 }
 //Function that verifies if the graph is directed
 bool Graph::getDirected()
@@ -144,7 +139,7 @@ void Graph::insertAllNodes()
     cout << " - 2 para colocar de maneira automatica, porem pre-determinada." << endl;
     // int x;
     // cin >> x;
-    for (int i = 1; i <= this->order; i++)
+    for (int i = 0; i < this->order; i++)
     {
         /*
         if (x == 1)
@@ -156,7 +151,7 @@ void Graph::insertAllNodes()
         else if (x == 2)
         {
            */
-        insertNode(i); /*
+        insertNode(i + 1); /*
         }
         else
         {
@@ -172,25 +167,23 @@ void Graph::insertAllNodes()
 void Graph::insertEdge(int id, int target_id, float weight)
 {
     // junta os nos entre si
-    if (searchNode(id) && searchNode(target_id)) // verifica se existe
+    if (searchNode(id)) //<-- ta sendo direcionado prestar atenção nisso.
     {
-        if (this->directed == true) //verifica direcionado, se sim cria a aresta
+        Node *p = getNode(id);
+        p->insertEdge(target_id, weight);
+        this->number_edges += 1;
+    }
+    if (this->directed) //se pa da pa botar mais coisa
+    {
+        Node *p = getNode(id);
+        p->incrementOutDegree();
+        Edge *aux = p->getFirstEdge();
+        while (target_id != aux->getTargetId())
         {
-            Node *p = getNode(id);
-            Node *sup = getNode(target_id);
-            p->insertEdge(target_id, weight);
-            this->number_edges += 1;
-            p->incrementOutDegree();
-            sup->incrementInDegree();            
+            aux->getNextEdge();
         }
-        else
-        {
-           Node *p = getNode(id);
-           Node *sup = getNode(target_id);
-           p->insertEdge(target_id, weight);
-           sup->insertEdge(id, weight);
-
-        }
+        p = getNode(aux->getTargetId());
+        p->incrementInDegree();
     }
 }
 
@@ -301,7 +294,7 @@ float Graph::floydMarshall(int idSource, int idTarget)
     return 0;
 }
 
-void Graph::dijkstra(ofstream &output_file,int idSource, int idTarget)
+void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
 {
     int distancia[this->order];
     int vertice_predecessor[this->order];
@@ -314,7 +307,7 @@ void Graph::dijkstra(ofstream &output_file,int idSource, int idTarget)
     priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> fila;
 
     //Iniciar todas as distancias como inifinito, todos vertices como não visitados e todos predecessores como inexistentes(-1)
-    for (int i = 1; i <= this->order; i++)
+    for (int i = 0; i < this->order; i++)
     {
 
         distancia[this->order] = 99999999;
@@ -323,12 +316,12 @@ void Graph::dijkstra(ofstream &output_file,int idSource, int idTarget)
         vertice_predecessor[i] = -1;
     }
 
-    distancia[idSource-1] = 0; //Distancia do vertice inicial até ele mesmo é 0
-    vertice_predecessor[idSource-1] = -1;
+    distancia[idSource] = 0; //Distancia do vertice inicial até ele mesmo é 0
+    vertice_predecessor[idSource] = -1;
 
     //inserir o vertice inicial na fila
-    fila.push(make_pair(distancia[idSource-1], this->getNode(idSource)));
-
+    fila.push(make_pair(distancia[idSource], this->getNode(idSource)));
+cout<<"teste de mesa"<<endl;
     //iteraçao
     while (!fila.empty())
     {
@@ -347,33 +340,35 @@ void Graph::dijkstra(ofstream &output_file,int idSource, int idTarget)
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
-                int verticeAdjacente = it->getTargetId()-1;
+                int verticeAdjacente = it->getTargetId();
                 int custo_aresta = it->getWeight();
 
                 //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
-                if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId()-1] + custo_aresta))
+                if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId()] + custo_aresta))
                 {
                     //atualiza a distancia do vertice Adjacente e insere na fila
-                    distancia[verticeAdjacente] = distancia[verticeAnalisado->getId()-1] + custo_aresta;
+                    distancia[verticeAdjacente] = distancia[verticeAnalisado->getId()] + custo_aresta;
                     vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
                     fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
                 }
             }
         }
     }
-
-    std::list<int> caminho;
-
-    for (int i = idTarget; vertice_predecessor[i-1] != -1; i = vertice_predecessor[i-1])
+    int contador=0;
+    int vetorId[this->order];
+    for (int j = idTarget; vertice_predecessor[j] != -1; j = vertice_predecessor[j])
     {
-        caminho.push_front(i);
+        vetorId[contador]=vertice_predecessor[j];
+        contador++;
     }
-    int tamanho =caminho.size();
-    for (int i = 0; i < tamanho; i++)
+
+    for (int k = 0; k < contador; k++)
     {
-        output_file << caminho.front();
-        caminho.pop_front();
+        output_file << vetorId[k] << " -- ";
+
     }
+    output_file <<  endl;
+
 }
 
 //function that prints a topological sorting
@@ -399,7 +394,7 @@ void Graph::deepthFirstSearch(ofstream &output_file, int targetedId)
         }
 
         i = auxDeepthFirstSearch(output_file, this->first_node, verify, i, targetedId);
-        output_file << " valor de i(equivale a quantidade de nos passados): " << i << endl;
+        cout << " valor de i(equivale a quantidade de nos passados): " << i << endl;
         output_file << first_node->getId() << endl;
     }
 }
@@ -441,7 +436,7 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
             p = getNode(aux->getTargetId());
 
             i = auxDeepthFirstSearch(output_file, p, verify, i + 1, targetedId); // se eu igualar a um i aqui eu tenho o numero de vertices visitados
-            // verifica se ta voltano da recursividade apos ter achado, caso contrario, bota o algoritimo pra continuar a procurar do vertice anterior
+                                                                                 // verifica se ta voltano da recursividade apos ter achado, caso contrario, bota o algoritimo pra continuar a procurar do vertice anterior
             if (verify[p->getId() - 1])
             {
                 i = auxDeepthFirstSearch(output_file, sup, verify, i + 1, targetedId); // faz a continuação da procura
