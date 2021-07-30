@@ -76,8 +76,14 @@ int Graph::getOrder()
 }
 int Graph::getNumberEdges()
 {
-
-    return this->number_edges;
+    if (directed)
+    {
+        return this->number_edges;
+    }
+    else
+    {
+        return this->number_edges / 2;
+    }
 }
 //Function that verifies if the graph is directed
 bool Graph::getDirected()
@@ -169,21 +175,24 @@ void Graph::insertEdge(int id, int target_id, float weight)
     // junta os nos entre si
     if (searchNode(id)) //<-- ta sendo direcionado prestar atenção nisso.
     {
-        Node *p = getNode(id);
-        p->insertEdge(target_id, weight);
-        this->number_edges += 1;
-    }
-    if (this->directed) //se pa da pa botar mais coisa
-    {
-        Node *p = getNode(id);
-        p->incrementOutDegree();
-        Edge *aux = p->getFirstEdge();
-        while (target_id != aux->getTargetId())
+        if (this->directed) //se pa da pa botar mais coisa
         {
-            aux->getNextEdge();
+            Node *p = getNode(id);
+            Node *sup = getNode(target_id);
+
+            p->insertEdge(target_id, weight);
+            p->incrementOutDegree();
+            sup->incrementInDegree();
+            this->number_edges += 1;
         }
-        p = getNode(aux->getTargetId());
-        p->incrementInDegree();
+        else
+        {
+            Node *p = getNode(id);
+            Node *sup = getNode(target_id);
+            p->insertEdge(target_id, weight);
+            sup->insertEdge(id, weight);
+            this->number_edges += 1;
+        }
     }
 }
 
@@ -316,12 +325,11 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
         vertice_predecessor[i] = -1;
     }
 
-    distancia[idSource] = 0; //Distancia do vertice inicial até ele mesmo é 0
-    vertice_predecessor[idSource] = -1;
+    distancia[idSource - 1] = 0; //Distancia do vertice inicial até ele mesmo é 0
+    vertice_predecessor[idSource - 1] = -1;
 
     //inserir o vertice inicial na fila
-    fila.push(make_pair(distancia[idSource], this->getNode(idSource)));
-cout<<"teste de mesa"<<endl;
+    fila.push(make_pair(distancia[idSource - 1], this->getNode(idSource)));
     //iteraçao
     while (!fila.empty())
     {
@@ -331,44 +339,50 @@ cout<<"teste de mesa"<<endl;
         fila.pop();                                   //remove da fila
 
         //verifica se o vértice ja foi visitado
-        if (visitados[verticeAnalisado->getId()] == false)
+        if (visitados[verticeAnalisado->getId() - 1] == false)
         {
             //marca como visitado
-            visitados[verticeAnalisado->getId()] = true;
+            visitados[verticeAnalisado->getId() - 1] = true;
 
             // percorre os vértices adjacentes  do vertice analisado
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
-                int verticeAdjacente = it->getTargetId();
+                int verticeAdjacente = it->getTargetId() - 1;
                 int custo_aresta = it->getWeight();
 
                 //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
-                if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId()] + custo_aresta))
+                if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId() - 1] + custo_aresta))
                 {
                     //atualiza a distancia do vertice Adjacente e insere na fila
-                    distancia[verticeAdjacente] = distancia[verticeAnalisado->getId()] + custo_aresta;
+                    distancia[verticeAdjacente] = distancia[verticeAnalisado->getId() - 1] + custo_aresta;
                     vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
                     fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
                 }
             }
         }
     }
-    int contador=0;
+    output_file << "teste de mesa 1" << endl;
+    int contador = 0;
     int vetorId[this->order];
-    for (int j = idTarget; vertice_predecessor[j] != -1; j = vertice_predecessor[j])
+    for (int o = 0; o < this->order; o++)
     {
-        vetorId[contador]=vertice_predecessor[j];
+        output_file << vertice_predecessor[o] << " e ";
+    }
+    output_file << endl;
+    for (int j = idTarget; vertice_predecessor[j - 1] != -1; j = vertice_predecessor[j - 1])
+    {
+        vetorId[contador] = vertice_predecessor[j - 1];
         contador++;
     }
-
+    output_file << "valor contador: " << contador << endl;
+    output_file << "teste de mesa 2" << endl;
     for (int k = 0; k < contador; k++)
     {
         output_file << vetorId[k] << " -- ";
-
     }
-    output_file <<  endl;
-
+    output_file << "teste de mesa 3" << endl;
+    output_file << endl;
 }
 
 //function that prints a topological sorting
