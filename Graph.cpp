@@ -51,13 +51,15 @@ Graph::~Graph()
 
 void Graph::printGraph(ofstream &output_file)
 {
+    output_file <<"Ordem grafo: " << this->order << endl;
     Node *p = this->first_node;
     Edge *aux = p->getFirstEdge();
     output_file << "Printano o Grafo" << endl;
     while (p != NULL)
     {
-    
+
         aux = p->getFirstEdge();
+        
         while (aux != NULL)
         {
 
@@ -299,7 +301,7 @@ float Graph::floydMarshall(int idSource, int idTarget)
     return 0;
 }
 
-void Graph::dijkstra(int idSource, int idTarget)
+void Graph::dijkstra(ofstream &output_file,int idSource, int idTarget)
 {
     int distancia[this->order];
     int vertice_predecessor[this->order];
@@ -312,7 +314,7 @@ void Graph::dijkstra(int idSource, int idTarget)
     priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> fila;
 
     //Iniciar todas as distancias como inifinito, todos vertices como não visitados e todos predecessores como inexistentes(-1)
-    for (int i = 0; i < this->order; i++)
+    for (int i = 1; i <= this->order; i++)
     {
 
         distancia[this->order] = 99999999;
@@ -321,11 +323,11 @@ void Graph::dijkstra(int idSource, int idTarget)
         vertice_predecessor[i] = -1;
     }
 
-    distancia[idSource] = 0; //Distancia do vertice inicial até ele mesmo é 0
-    vertice_predecessor[idSource] = -1;
+    distancia[idSource-1] = 0; //Distancia do vertice inicial até ele mesmo é 0
+    vertice_predecessor[idSource-1] = -1;
 
     //inserir o vertice inicial na fila
-    fila.push(make_pair(distancia[idSource], this->getNode(idSource)));
+    fila.push(make_pair(distancia[idSource-1], this->getNode(idSource)));
 
     //iteraçao
     while (!fila.empty())
@@ -345,14 +347,14 @@ void Graph::dijkstra(int idSource, int idTarget)
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
-                int verticeAdjacente = it->getTargetId();
+                int verticeAdjacente = it->getTargetId()-1;
                 int custo_aresta = it->getWeight();
 
                 //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
-                if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId()] + custo_aresta))
+                if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId()-1] + custo_aresta))
                 {
                     //atualiza a distancia do vertice Adjacente e insere na fila
-                    distancia[verticeAdjacente] = distancia[verticeAnalisado->getId()] + custo_aresta;
+                    distancia[verticeAdjacente] = distancia[verticeAnalisado->getId()-1] + custo_aresta;
                     vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
                     fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
                 }
@@ -362,14 +364,14 @@ void Graph::dijkstra(int idSource, int idTarget)
 
     std::list<int> caminho;
 
-    for (int i = idTarget; vertice_predecessor[i] != -1; i = vertice_predecessor[i])
+    for (int i = idTarget; vertice_predecessor[i-1] != -1; i = vertice_predecessor[i-1])
     {
         caminho.push_front(i);
     }
-
-    for (int i = 0; i < caminho.size(); i++)
+    int tamanho =caminho.size();
+    for (int i = 0; i < tamanho; i++)
     {
-        cout << caminho.front();
+        output_file << caminho.front();
         caminho.pop_front();
     }
 }
@@ -397,7 +399,7 @@ void Graph::deepthFirstSearch(ofstream &output_file, int targetedId)
         }
 
         i = auxDeepthFirstSearch(output_file, this->first_node, verify, i, targetedId);
-        cout << " valor de i(equivale a quantidade de nos passados): " << i << endl;
+        output_file << " valor de i(equivale a quantidade de nos passados): " << i << endl;
         output_file << first_node->getId() << endl;
     }
 }
@@ -439,7 +441,7 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
             p = getNode(aux->getTargetId());
 
             i = auxDeepthFirstSearch(output_file, p, verify, i + 1, targetedId); // se eu igualar a um i aqui eu tenho o numero de vertices visitados
-                                                                                 // verifica se ta voltano da recursividade apos ter achado, caso contrario, bota o algoritimo pra continuar a procurar do vertice anterior
+            // verifica se ta voltano da recursividade apos ter achado, caso contrario, bota o algoritimo pra continuar a procurar do vertice anterior
             if (verify[p->getId() - 1])
             {
                 i = auxDeepthFirstSearch(output_file, sup, verify, i + 1, targetedId); // faz a continuação da procura
