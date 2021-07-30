@@ -158,7 +158,7 @@ void Graph::insertAllNodes()
 void Graph::insertEdge(int id, int target_id, float weight)
 {
     // junta os nos entre si
-    if (searchNode(id))
+    if (searchNode(id))//<-- ta sendo direcionado prestar atenção nisso.
     {
         Node *p = getNode(id);
         p->insertEdge(target_id, weight);
@@ -297,10 +297,13 @@ void Graph::dijkstra(int idSource, int idTarget)
 
     priority_queue < pair < int, Node *>, vector < pair < int, Node *> >, greater< pair < int, Node *> > > fila;
 
-    //Iniciar todas as distancias como inifinito
+
+    //Iniciar todas as distancias como inifinito, todos vertices como não visitados e todos predecessores como inexistentes(-1)
     for (int i = 0; i < this->order; i++)
     {
-        distancia[this->order] = 999999999;
+
+        distancia[this->order]=99999999999;
+
         visitados[i] = false;
         vertice_predecessor[i] = -1;
     }
@@ -308,15 +311,17 @@ void Graph::dijkstra(int idSource, int idTarget)
     distancia[idSource] = 0; //Distancia do vertice inicial até ele mesmo é 0
     vertice_predecessor[idSource] = -1;
 
+
     //inserir o vertice inicial na fila
     fila.push(make_pair(distancia[idSource], this->getNode(idSource)));
 
     //iteraçao
     while (!fila.empty())
     {
-        pair<int, Node *> distancia_no = fila.top();  //copia par (vertice e distancia) do topo
-        Node *verticeAnalisado = distancia_no.second; //obtem o vértice copiado no passo anterior, (deveria ser do tipo Node???)
-        fila.pop();                                   //remove da fila
+
+        pair<int, Node *> distancia_no = fila.top(); //copia par (vertice e distancia) do topo
+        Node *verticeAnalisado = distancia_no.second;               //obtem o vértice copiado no passo anterior
+        fila.pop();                       //remove da fila
 
         //verifica se o vértice ja foi visitado
         if (visitados[verticeAnalisado->getId()] == false)
@@ -326,7 +331,6 @@ void Graph::dijkstra(int idSource, int idTarget)
 
             // percorre os vértices adjacentes  do vertice analisado
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
-
             {
                 //obtém o vertice adjancente e o custa da aresta
                 int verticeAdjacente = it->getTargetId();
@@ -345,10 +349,17 @@ void Graph::dijkstra(int idSource, int idTarget)
     }
 
     std::list<int> caminho;
-    for (int i = idTarget; vertice_predecessor[i] != -1; i = vertice_predecessor[i])
-    {
-        caminho.push_front(i);
-    }
+
+for(int i=idTarget;vertice_predecessor[i] != -1; i=vertice_predecessor[i])
+{
+    caminho.push_front(i);
+}
+
+for(int i=0;i<caminho.size();i++){
+    cout<<caminho.front();
+    caminho.pop_front();
+}
+
 }
 
 //function that prints a topological sorting
@@ -403,7 +414,7 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
         }
 
         //faz a leitura pra direita da lista de aresta,
-        if (aux != NULL)
+        if (aux != nullptr)
         {
             Node *sup = p;
             p = getNode(aux->getTargetId());
@@ -425,7 +436,6 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
         return i;
     }
 }
-
 Graph *getVertexInduced(int *listIdNodes)
 {
 }
@@ -433,7 +443,6 @@ Graph *getVertexInduced(int *listIdNodes)
 Graph *agmKuskal()
 {
 }
-
 Graph *agmPrim()
 {
 }

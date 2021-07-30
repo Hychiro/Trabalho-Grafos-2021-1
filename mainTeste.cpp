@@ -28,14 +28,22 @@ int main()
 
     Node *p = grafo->getFirstNode();
     int i = 0;
+    int order = grafo->getOrder();
+    Edge *aux = p->getFirstEdge();
     while (p != NULL && i != order)
     {
-        cout << p->getId();
+        
         p = p->getNextNode();
+        aux = p->getFirstEdge();
+        while (aux != NULL)
+        {
+            cout << p->getId() << " -- "<< aux->getTargetId()<<endl;
+            aux = aux->getNextEdge();
+        }
         i++;
     }
 
-    grafo->deepthFirstSearch(output_file,2);
+    grafo->deepthFirstSearch(output_file, 2);
     output_file.close();
     return 0;
 }
