@@ -21,7 +21,7 @@ int main()
     ofstream output_file;
     output_file.open("C://Users//Usuario//Documents//repositorio//Trabalho-Grafos-2021-1//testes.txt");
 
-    Graph *grafo = new Graph(10, false, false, false);
+    Graph *grafo = new Graph(10, true, false, false);
     grafo->insertEdge(1,2,0);
     grafo->insertEdge(2,3,0);
     grafo->insertEdge(3,4,0);

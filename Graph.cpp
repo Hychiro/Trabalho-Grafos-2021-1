@@ -56,7 +56,7 @@ void Graph::printGraph(ofstream &output_file)
     output_file << "Printano o Grafo" << endl;
     while (p != NULL)
     {
-
+    
         aux = p->getFirstEdge();
         while (aux != NULL)
         {
@@ -76,8 +76,11 @@ int Graph::getOrder()
 }
 int Graph::getNumberEdges()
 {
-
+    if(directed){
     return this->number_edges;
+}else{
+    return this->number_edges/2;
+}
 }
 //Function that verifies if the graph is directed
 bool Graph::getDirected()
@@ -139,7 +142,7 @@ void Graph::insertAllNodes()
     cout << " - 2 para colocar de maneira automatica, porem pre-determinada." << endl;
     // int x;
     // cin >> x;
-    for (int i = 0; i < this->order; i++)
+    for (int i = 1; i <= this->order; i++)
     {
         /*
         if (x == 1)
@@ -151,7 +154,7 @@ void Graph::insertAllNodes()
         else if (x == 2)
         {
            */
-        insertNode(i + 1); /*
+        insertNode(i); /*
         }
         else
         {
@@ -167,23 +170,25 @@ void Graph::insertAllNodes()
 void Graph::insertEdge(int id, int target_id, float weight)
 {
     // junta os nos entre si
-    if (searchNode(id)) //<-- ta sendo direcionado prestar atenção nisso.
+    if (searchNode(id) && searchNode(target_id)) // verifica se existe
     {
-        Node *p = getNode(id);
-        p->insertEdge(target_id, weight);
-        this->number_edges += 1;
-    }
-    if (this->directed) //se pa da pa botar mais coisa
-    {
-        Node *p = getNode(id);
-        p->incrementOutDegree();
-        Edge *aux = p->getFirstEdge();
-        while (target_id != aux->getTargetId())
+        if (this->directed == true) //verifica direcionado, se sim cria a aresta
         {
-            aux->getNextEdge();
+            Node *p = getNode(id);
+            Node *sup = getNode(target_id);
+            p->insertEdge(target_id, weight);
+            this->number_edges += 1;
+            p->incrementOutDegree();
+            sup->incrementInDegree();            
         }
-        p = getNode(aux->getTargetId());
-        p->incrementInDegree();
+        else
+        {
+           Node *p = getNode(id);
+           Node *sup = getNode(target_id);
+           p->insertEdge(target_id, weight);
+           sup->insertEdge(id, weight);
+
+        }
     }
 }
 
