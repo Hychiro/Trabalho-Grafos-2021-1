@@ -42,6 +42,7 @@ class Graph{
         void removeNode(int id);
         bool searchNode(int id);
         Node* getNode(int id);
+        void insertAllNodes();
 
         void topologicalSorting();
         void deepthFirstSearch(ofstream& output_file, int id);

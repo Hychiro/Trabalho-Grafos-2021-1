@@ -14,21 +14,28 @@
 #include "Node.cpp"
 #include "Edge.cpp"
 
-int main(){
+using namespace std;
+
+int main()
+{
     ofstream output_file;
-    output_file.open("C://Users//Usuario//Documents//Ufjf//Grafos//testes.txt");
-    
-    Graph* grafo = new Graph(4,false,false,false);
-    grafo->insertEdge(1,2,0);
-    grafo->insertEdge(2,1,0);
-    grafo->insertEdge(1,4,0);
-    grafo->insertEdge(4,1,0);
-    grafo->insertEdge(3,2,0);
-    grafo->insertEdge(2,3,0);
-    grafo->insertEdge(3,4,0);
-    grafo->insertEdge(4,3,0);
-    
-    grafo->deepthFirstSearch( output_file,4);
+    output_file.open("C://Users//Usuario//Documents//repositorio//Trabalho-Grafos-2021-1//testes.txt");
+
+    Graph *grafo = new Graph(4, false, false, false);
+
+    int order = grafo->getOrder();
+    cout << order << endl;
+
+    Node *p = grafo->getFirstNode();
+    int i = 0;
+    while (p != NULL && i != order)
+    {
+        cout << p->getId();
+        p = p->getNextNode();
+        i++;
+    }
+
+    grafo->deepthFirstSearch(output_file,2);
     output_file.close();
     return 0;
 }

@@ -26,13 +26,21 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->directed = directed;
     this->weighted_edge = weighted_edge;
     this->weighted_node = weighted_node;
-    this->first_node = this->last_node = NULL;
+    this->first_node = NULL;
+    this->last_node = NULL;
     this->number_edges = 0;
     //inserindo os nos
-    for (int i = 1; i <= this->order; i++)
-    {
-        insertNode(i);
-    }
+   /* for(int i=1; i<=this->order; i++){
+        Node* next_node = new Node(i);
+        if(!this->first_node){
+            this->first_node = next_node;
+            this->last_node = this->first_node; 
+        }else{
+            this->last_node->setNextNode(next_node);
+            this->last_node = next_node;
+        }
+    }*/
+    insertAllNodes();
 }
 
 // Destructor
@@ -105,16 +113,46 @@ void Graph::insertNode(int id)
 {
     // so cria o no e deixa ele no espaço
     Node *p = new Node(id);
-    p->setNextNode(NULL);
-    if (first_node == NULL)
+    if (this->first_node  == NULL)
     {
-        first_node = p;
+        this->first_node  = p;
     }
     else
     {
-        last_node->setNextNode(p);
+        this->last_node->setNextNode(p);
     }
-    last_node = p;
+    this->last_node = p;
+    
+}
+void Graph::insertAllNodes()
+{
+    cout << " Escolha:" << endl;
+    cout << " - 1 para colocar o id manualmente." << endl;
+    cout << " - 2 para colocar de maneira automatica, porem pre-determinada." << endl;
+    int x;
+    cin >> x;
+    for (int i = 0;i < this->order;i++)
+    {
+/*
+        if (x == 1)
+        {
+            int y;
+            cin >> y;
+            insertNode(y);
+        }
+        else if (x == 2)
+        {
+           */ insertNode(i+1);/*
+        }
+        else
+        {
+            cout << "Erro: selecione 1 ou 2 " << endl;
+            cout << " - 1 para colocar o id manualmente." << endl;
+            cout << " - 2 para colocar de maneira automatica, porem pre-determinada." << endl;
+            i--;
+            cin >> x;
+        }*/
+    }
 }
 
 void Graph::insertEdge(int id, int target_id, float weight)
@@ -241,34 +279,34 @@ Node *Graph::getNode(int id)
 }
 
 //Function that prints a set of edges belongs breadth tree
-/*
+
 float Graph::floydMarshall(int idSource, int idTarget)
 {
+    return 0;
 }
 
 void Graph::dijkstra(int idSource, int idTarget)
 {
-    int distancia[this->order]; 
-    int vertice_predecessor[this->order];       
+    int distancia[this->order];
+    int vertice_predecessor[this->order];
     bool visitados[this->order]; //vetor que verifica se o vértice ja foi visitado
 
-    
     //Fazer uma fila de prioridade. (priority_queue)????
-    //a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????) 
+    //a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????)
     //e o segundo valor seja o vetor (inteiro ou node???)
-   
-    priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> fila;
+
+    priority_queue < pair < int, Node *>, vector < pair < int, Node *> >, greater< pair < int, Node *> > > fila;
 
     //Iniciar todas as distancias como inifinito
     for (int i = 0; i < this->order; i++)
     {
-        distancia[this->order]=INFINITY;
+        distancia[this->order] = 999999999;
         visitados[i] = false;
-        vertice_predecessor[i]=-1;
+        vertice_predecessor[i] = -1;
     }
 
     distancia[idSource] = 0; //Distancia do vertice inicial até ele mesmo é 0
-         vertice_predecessor[idSource]=-1;
+    vertice_predecessor[idSource] = -1;
 
     //inserir o vertice inicial na fila
     fila.push(make_pair(distancia[idSource], this->getNode(idSource)));
@@ -276,16 +314,15 @@ void Graph::dijkstra(int idSource, int idTarget)
     //iteraçao
     while (!fila.empty())
     {
-        pair<int, Node *> distancia_no = fila.top(); //copia par (vertice e distancia) do topo
-        Node *verticeAnalisado = distancia_no.second;               //obtem o vértice copiado no passo anterior, (deveria ser do tipo Node???)
-        fila.pop();                       //remove da fila
+        pair<int, Node *> distancia_no = fila.top();  //copia par (vertice e distancia) do topo
+        Node *verticeAnalisado = distancia_no.second; //obtem o vértice copiado no passo anterior, (deveria ser do tipo Node???)
+        fila.pop();                                   //remove da fila
 
         //verifica se o vértice ja foi visitado
         if (visitados[verticeAnalisado->getId()] == false)
         {
             //marca como visitado
             visitados[verticeAnalisado->getId()] = true;
-
 
             // percorre os vértices adjacentes  do vertice analisado
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
@@ -306,40 +343,38 @@ void Graph::dijkstra(int idSource, int idTarget)
             }
         }
     }
-    
-    
 
     std::list<int> caminho;
-for(int i=idTarget;vertice_predecessor[i] != -1; i=vertice_predecessor[i])
-{
-    caminho.push_front(i);
-}
-
-
-
+    for (int i = idTarget; vertice_predecessor[i] != -1; i = vertice_predecessor[i])
+    {
+        caminho.push_front(i);
+    }
 }
 
 //function that prints a topological sorting
 void topologicalSorting()
 {
 }
-*/
+
 void Graph::deepthFirstSearch(ofstream &output_file, int targetedId)
 {
     int i = 0;
-
+    
     bool *verify = new bool[getOrder()];
     for (int k = 0; k < getOrder(); k++)
     {
         verify[k] = false;
     }
 
-    i = auxDeepthFirstSearch(output_file, first_node, verify, i, targetedId);
-      output_file << first_node->getId() << endl;
+    i = auxDeepthFirstSearch(output_file, this->first_node, verify, i, targetedId);
+    
+    cout << first_node->getId() << endl;
+    output_file << first_node->getId() << endl;
 }
 
 int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], int i, int targetedId)
 {
+    cout << i;
     // retorna o valor de i, para quando achar o no,
     if (p->getId() == targetedId)
     {
@@ -385,6 +420,7 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
         {
             return i;
         }
+        cout << p->getId() << ", ";
         output_file << p->getId() << ", ";
         return i;
     }

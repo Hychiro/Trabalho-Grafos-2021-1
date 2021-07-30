@@ -125,7 +125,7 @@ void Node::removeAllEdges(){
 
             next = aux->getNextEdge();
             delete aux;
-
+            aux = next;
         }
 
     }

@@ -9,6 +9,11 @@
 #include <chrono>
 #include "Graph.h"
 #include "Node.h"
+#include "Edge.h"
+#include "Graph.cpp"
+#include "Node.cpp"
+#include "Edge.cpp"
+
 
 using namespace std;
 
