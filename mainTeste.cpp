@@ -21,29 +21,25 @@ int main()
     ofstream output_file;
     output_file.open("C://Users//Usuario//Documents//repositorio//Trabalho-Grafos-2021-1//testes.txt");
 
-    Graph *grafo = new Graph(4, false, false, false);
-
+    Graph *grafo = new Graph(10, false, false, false);
+    grafo->insertEdge(1,2,0);
+    grafo->insertEdge(2,3,0);
+    grafo->insertEdge(3,4,0);
+    grafo->insertEdge(4,6,0);
+    grafo->insertEdge(3,5,0);
+    grafo->insertEdge(6,7,0);
+    grafo->insertEdge(8,7,0);
+    grafo->insertEdge(9,8,0);
+    grafo->insertEdge(10,9,0);
+    
     int order = grafo->getOrder();
-    cout << order << endl;
+    cout << "Ordem: "<< order << endl;
 
     Node *p = grafo->getFirstNode();
-    int i = 0;
-    int order = grafo->getOrder();
     Edge *aux = p->getFirstEdge();
-    while (p != NULL && i != order)
-    {
-        
-        p = p->getNextNode();
-        aux = p->getFirstEdge();
-        while (aux != NULL)
-        {
-            cout << p->getId() << " -- "<< aux->getTargetId()<<endl;
-            aux = aux->getNextEdge();
-        }
-        i++;
-    }
-
-    grafo->deepthFirstSearch(output_file, 2);
+    grafo->printGraph(output_file);
+    grafo->deepthFirstSearch(output_file, 8);
     output_file.close();
+
     return 0;
 }

@@ -14,10 +14,10 @@
 #include "Node.cpp"
 #include "Edge.cpp"
 
-
 using namespace std;
 
-Graph* leitura(ifstream& input_file, int directed, int weightedEdge, int weightedNode){
+Graph *leitura(ifstream &input_file, int directed, int weightedEdge, int weightedNode)
+{
 
     //Variáveis para auxiliar na criação dos nós no Grafo
     int idNodeSource;
@@ -28,58 +28,62 @@ Graph* leitura(ifstream& input_file, int directed, int weightedEdge, int weighte
     input_file >> order;
 
     //Criando objeto grafo
-    Graph* graph = new Graph(order, directed, weightedEdge, weightedNode);
+    Graph *graph = new Graph(order, directed, weightedEdge, weightedNode);
 
     //Leitura de arquivo
 
-    if(!graph->getWeightedEdge() && !graph->getWeightedNode()){
+    if (!graph->getWeightedEdge() && !graph->getWeightedNode())
+    {
 
-        while(input_file >> idNodeSource >> idNodeTarget) {
+        while (input_file >> idNodeSource >> idNodeTarget)
+        {
 
             graph->insertEdge(idNodeSource, idNodeTarget, 0);
-
         }
-
-    }else if(graph->getWeightedEdge() && !graph->getWeightedNode() ){
+    }
+    else if (graph->getWeightedEdge() && !graph->getWeightedNode())
+    {
 
         float edgeWeight;
 
-        while(input_file >> idNodeSource >> idNodeTarget >> edgeWeight) {
+        while (input_file >> idNodeSource >> idNodeTarget >> edgeWeight)
+        {
 
             graph->insertEdge(idNodeSource, idNodeTarget, edgeWeight);
-
         }
-
-    }else if(graph->getWeightedNode() && !graph->getWeightedEdge()){
+    }
+    else if (graph->getWeightedNode() && !graph->getWeightedEdge())
+    {
 
         float nodeSourceWeight, nodeTargetWeight;
 
-        while(input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight) {
+        while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight)
+        {
 
             graph->insertEdge(idNodeSource, idNodeTarget, 0);
             graph->getNode(idNodeSource)->setWeight(nodeSourceWeight);
             graph->getNode(idNodeTarget)->setWeight(nodeTargetWeight);
-
         }
-
-    }else if(graph->getWeightedNode() && graph->getWeightedEdge()){
+    }
+    else if (graph->getWeightedNode() && graph->getWeightedEdge())
+    {
 
         float nodeSourceWeight, nodeTargetWeight, edgeWeight;
 
-        while(input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight) {
+        while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight)
+        {
 
             graph->insertEdge(idNodeSource, idNodeTarget, edgeWeight);
             graph->getNode(idNodeSource)->setWeight(nodeSourceWeight);
             graph->getNode(idNodeTarget)->setWeight(nodeTargetWeight);
-
         }
-
     }
 
     return graph;
 }
 
-Graph* leituraInstancia(ifstream& input_file, int directed, int weightedEdge, int weightedNode){
+Graph *leituraInstancia(ifstream &input_file, int directed, int weightedEdge, int weightedNode)
+{
 
     //Variáveis para auxiliar na criação dos nós no Grafo
     int idNodeSource;
@@ -91,19 +95,20 @@ Graph* leituraInstancia(ifstream& input_file, int directed, int weightedEdge, in
     input_file >> order >> numEdges;
 
     //Criando objeto grafo
-    Graph* graph = new Graph(order, directed, weightedEdge, weightedNode);
+    Graph *graph = new Graph(order, directed, weightedEdge, weightedNode);
 
     //Leitura de arquivo
-    while(input_file >> idNodeSource >> idNodeTarget) {
+    while (input_file >> idNodeSource >> idNodeTarget)
+    {
 
         graph->insertEdge(idNodeSource, idNodeTarget, 0);
-
     }
 
     return graph;
 }
 
-int menu(){
+int menu()
+{
 
     int selecao;
 
@@ -119,106 +124,128 @@ int menu(){
     cout << "[8] Algoritmo Guloso" << endl;
     cout << "[9] Algoritmo Guloso Randomizado " << endl;
     cout << "[10] Algoritmo Guloso Randomizado Reativo" << endl;
+    cout << "[11] Printando o Grafo" << endl;
+    cout << "[12] Fazendo busca por profundidade" << endl;
     cout << "[0] Sair" << endl;
 
     cin >> selecao;
 
     return selecao;
-
 }
 
-void selecionar(int selecao, Graph* graph, ofstream& output_file){
+void selecionar(int selecao, Graph *graph, ofstream &output_file)
+{
 
-    switch (selecao) {
+    switch (selecao)
+    {
 
-        //Subgrafo induzido por um conjunto de vértices X;
-        case 1:{
+    //Subgrafo induzido por um conjunto de vértices X;
+    case 1:
+    {
 
-            break;
-        }
-            //Caminho mínimo entre dois vértices usando Dijkstra;
-        case 2:{
+        break;
+    }
+        //Caminho mínimo entre dois vértices usando Dijkstra;
+    case 2:
+    {
 
-            break;
-        }
+        break;
+    }
 
-            //Caminho mínimo entre dois vértices usando Floyd;
-        case 3:{
+        //Caminho mínimo entre dois vértices usando Floyd;
+    case 3:
+    {
 
-            break;
-        }
+        break;
+    }
 
-            //AGM - Kruscal;
-        case 4:{
+        //AGM - Kruscal;
+    case 4:
+    {
 
+        break;
+    }
 
+        //AGM Prim;
+    case 5:
+    {
 
-            break;
-        }
+        break;
+    }
 
-            //AGM Prim;
-        case 5:{
+        //Busca em largura;
+    case 6:
+    {
 
-            break;
-        }
+        break;
+    }
+        //Ordenação Topologica;
+    case 7:
+    {
 
-            //Busca em largura;
-        case 6:{
+        break;
+    }
+    case 11:
+    {
 
-            break;
-        }
-            //Ordenação Topologica;
-        case 7:{
+        graph->printGraph(output_file);
 
-
-            break;
-        }
-        default:
-        {
-            cout << " Error!!! invalid option!!" << endl;
-        }
-
+        break;
+    }
+    case 12:
+    {
+        int x;
+        cout << "Digite o id o noh a ser pesquisado: ";
+        cin >> x;
+        graph->deepthFirstSearch(output_file,x);
+        break;
+    }
+    default:
+    {
+        cout << " Error!!! invalid option!!" << endl;
+    }
     }
 }
 
-int mainMenu(ofstream& output_file, Graph* graph){
+int mainMenu(ofstream &output_file, Graph *graph)
+{
 
     int selecao = 1;
 
-    while(selecao != 0){
-        system("clear");
+    while (selecao != 0)
+    {
+        system("cls");
         selecao = menu();
 
-        if(output_file.is_open())
+        if (output_file.is_open())
             selecionar(selecao, graph, output_file);
 
         else
             cout << "Unable to open the output_file" << endl;
 
         output_file << endl;
-
     }
 
     return 0;
 }
 
-
-
-int main(int argc, char const *argv[]) {
+int main(int argc, char const *argv[])
+{
 
     //Verificação se todos os parâmetros do programa foram entrados
-    if (argc != 6) {
+    if (argc != 6)
+    {
 
         cout << "ERROR: Expecting: ./<program_name> <input_file> <output_file> <directed> <weighted_edge> <weighted_node> " << endl;
         return 1;
-
     }
 
     string program_name(argv[0]);
     string input_file_name(argv[1]);
 
     string instance;
-    if(input_file_name.find("v") <= input_file_name.size()){
+    if (input_file_name.find("v") <= input_file_name.size())
+    {
         string instance = input_file_name.substr(input_file_name.find("v"));
         cout << "Running " << program_name << " with instance " << instance << " ... " << endl;
     }
@@ -229,21 +256,17 @@ int main(int argc, char const *argv[]) {
     input_file.open(argv[1], ios::in);
     output_file.open(argv[2], ios::out | ios::trunc);
 
-    
+    Graph *graph;
 
-    Graph* graph;
-
-    if(input_file.is_open()){
+    if (input_file.is_open())
+    {
 
         graph = leituraInstancia(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
-
-    }else
+    }
+    else
         cout << "Unable to open " << argv[1];
 
-
     mainMenu(output_file, graph);
-
-
 
     //Fechando arquivo de entrada
     input_file.close();
@@ -253,4 +276,3 @@ int main(int argc, char const *argv[]) {
 
     return 0;
 }
-

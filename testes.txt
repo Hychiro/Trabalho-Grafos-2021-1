@@ -1,0 +1,11 @@
+Printano o Grafo
+1 -- 2
+2 -- 3
+3 -- 4
+3 -- 5
+4 -- 6
+6 -- 7
+8 -- 7
+9 -- 8
+10 -- 9
+Printando o caminho da raiz ate o noh

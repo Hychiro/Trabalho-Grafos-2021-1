@@ -52,7 +52,7 @@ class Graph{
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
         void dijkstra(int idSource, int idTarget);
-
+        void printGraph(ofstream &output_file);
         //methods phase1
         float greed();
         float greedRandom();

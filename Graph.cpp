@@ -29,17 +29,7 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->first_node = NULL;
     this->last_node = NULL;
     this->number_edges = 0;
-    //inserindo os nos
-   /* for(int i=1; i<=this->order; i++){
-        Node* next_node = new Node(i);
-        if(!this->first_node){
-            this->first_node = next_node;
-            this->last_node = this->first_node; 
-        }else{
-            this->last_node->setNextNode(next_node);
-            this->last_node = next_node;
-        }
-    }*/
+
     insertAllNodes();
 }
 
@@ -56,6 +46,25 @@ Graph::~Graph()
         Node *aux_node = next_node->getNextNode();
         delete next_node;
         next_node = aux_node;
+    }
+}
+
+void Graph::printGraph(ofstream &output_file)
+{
+    Node *p = this->first_node;
+    Edge *aux = p->getFirstEdge();
+    output_file << "Printano o Grafo" << endl;
+    while (p != NULL)
+    {
+
+        aux = p->getFirstEdge();
+        while (aux != NULL)
+        {
+
+            output_file << p->getId() << " -- " << aux->getTargetId() << endl;
+            aux = aux->getNextEdge();
+        }
+        p = p->getNextNode();
     }
 }
 
@@ -113,27 +122,26 @@ void Graph::insertNode(int id)
 {
     // so cria o no e deixa ele no espaço
     Node *p = new Node(id);
-    if (this->first_node  == NULL)
+    if (this->first_node == NULL)
     {
-        this->first_node  = p;
+        this->first_node = p;
     }
     else
     {
         this->last_node->setNextNode(p);
     }
     this->last_node = p;
-    
 }
 void Graph::insertAllNodes()
 {
     cout << " Escolha:" << endl;
     cout << " - 1 para colocar o id manualmente." << endl;
     cout << " - 2 para colocar de maneira automatica, porem pre-determinada." << endl;
-    int x;
-    cin >> x;
-    for (int i = 0;i < this->order;i++)
+    // int x;
+    // cin >> x;
+    for (int i = 0; i < this->order; i++)
     {
-/*
+        /*
         if (x == 1)
         {
             int y;
@@ -142,7 +150,8 @@ void Graph::insertAllNodes()
         }
         else if (x == 2)
         {
-           */ insertNode(i+1);/*
+           */
+        insertNode(i + 1); /*
         }
         else
         {
@@ -158,7 +167,7 @@ void Graph::insertAllNodes()
 void Graph::insertEdge(int id, int target_id, float weight)
 {
     // junta os nos entre si
-    if (searchNode(id))//<-- ta sendo direcionado prestar atenção nisso.
+    if (searchNode(id)) //<-- ta sendo direcionado prestar atenção nisso.
     {
         Node *p = getNode(id);
         p->insertEdge(target_id, weight);
@@ -295,14 +304,13 @@ void Graph::dijkstra(int idSource, int idTarget)
     //a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????)
     //e o segundo valor seja o vetor (inteiro ou node???)
 
-    priority_queue < pair < int, Node *>, vector < pair < int, Node *> >, greater< pair < int, Node *> > > fila;
-
+    priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> fila;
 
     //Iniciar todas as distancias como inifinito, todos vertices como não visitados e todos predecessores como inexistentes(-1)
     for (int i = 0; i < this->order; i++)
     {
 
-        distancia[this->order]=99999999999;
+        distancia[this->order] = 99999999;
 
         visitados[i] = false;
         vertice_predecessor[i] = -1;
@@ -311,7 +319,6 @@ void Graph::dijkstra(int idSource, int idTarget)
     distancia[idSource] = 0; //Distancia do vertice inicial até ele mesmo é 0
     vertice_predecessor[idSource] = -1;
 
-
     //inserir o vertice inicial na fila
     fila.push(make_pair(distancia[idSource], this->getNode(idSource)));
 
@@ -319,9 +326,9 @@ void Graph::dijkstra(int idSource, int idTarget)
     while (!fila.empty())
     {
 
-        pair<int, Node *> distancia_no = fila.top(); //copia par (vertice e distancia) do topo
-        Node *verticeAnalisado = distancia_no.second;               //obtem o vértice copiado no passo anterior
-        fila.pop();                       //remove da fila
+        pair<int, Node *> distancia_no = fila.top();  //copia par (vertice e distancia) do topo
+        Node *verticeAnalisado = distancia_no.second; //obtem o vértice copiado no passo anterior
+        fila.pop();                                   //remove da fila
 
         //verifica se o vértice ja foi visitado
         if (visitados[verticeAnalisado->getId()] == false)
@@ -350,16 +357,16 @@ void Graph::dijkstra(int idSource, int idTarget)
 
     std::list<int> caminho;
 
-for(int i=idTarget;vertice_predecessor[i] != -1; i=vertice_predecessor[i])
-{
-    caminho.push_front(i);
-}
+    for (int i = idTarget; vertice_predecessor[i] != -1; i = vertice_predecessor[i])
+    {
+        caminho.push_front(i);
+    }
 
-for(int i=0;i<caminho.size();i++){
-    cout<<caminho.front();
-    caminho.pop_front();
-}
-
+    for (int i = 0; i < caminho.size(); i++)
+    {
+        cout << caminho.front();
+        caminho.pop_front();
+    }
 }
 
 //function that prints a topological sorting
@@ -369,27 +376,34 @@ void topologicalSorting()
 
 void Graph::deepthFirstSearch(ofstream &output_file, int targetedId)
 {
-    int i = 0;
-    
-    bool *verify = new bool[getOrder()];
-    for (int k = 0; k < getOrder(); k++)
+    if (!searchNode(targetedId))
     {
-        verify[k] = false;
+        cout << " Esse noh nao existe " << endl;
     }
+    else
+    {
+        output_file << "Printando o caminho da raiz ate o noh" << endl;
+        int i = 0;
+        bool *verify = new bool[getOrder()];
+        for (int k = 0; k < getOrder(); k++)
+        {
 
-    i = auxDeepthFirstSearch(output_file, this->first_node, verify, i, targetedId);
-    
-    cout << first_node->getId() << endl;
-    output_file << first_node->getId() << endl;
+            verify[k] = false;
+        }
+
+        i = auxDeepthFirstSearch(output_file, this->first_node, verify, i, targetedId);
+        cout << " valor de i(equivale a quantidade de nos passados): " << i << endl;
+        output_file << first_node->getId() << endl;
+    }
 }
 
 int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], int i, int targetedId)
 {
-    cout << i;
+    // falta detalhe para caso nao seja conexo e para caso seja direcionado  porem sem caminho.
+
     // retorna o valor de i, para quando achar o no,
     if (p->getId() == targetedId)
     {
-        output_file << p->getId() << ", ";
         verify[first_node->getId() - 1] = true;
         return i;
     }
@@ -414,25 +428,24 @@ int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], i
         }
 
         //faz a leitura pra direita da lista de aresta,
-        if (aux != nullptr)
+        if (aux != NULL)
         {
             Node *sup = p;
             p = getNode(aux->getTargetId());
 
             i = auxDeepthFirstSearch(output_file, p, verify, i + 1, targetedId); // se eu igualar a um i aqui eu tenho o numero de vertices visitados
-            // verifica se ta voltano da recursividade apos ter achado, caso contrario, bota o algoritimo pra continuar a procurar do vertice anterior
-            if (!verify[targetedId - 1])
+                                                                                 // verifica se ta voltano da recursividade apos ter achado, caso contrario, bota o algoritimo pra continuar a procurar do vertice anterior
+            if (verify[p->getId() - 1])
             {
-                verify[sup->getId() - 1] = false;
                 i = auxDeepthFirstSearch(output_file, sup, verify, i + 1, targetedId); // faz a continuação da procura
             }
         }
         else
         {
-            return i;
+            return i + 1;
         }
-        cout << p->getId() << ", ";
-        output_file << p->getId() << ", ";
+        //cout << p->getId() << endl;
+        output_file << p->getId() << " -- ";
         return i;
     }
 }
