@@ -8,6 +8,8 @@
 #include <fstream>
 #include <stack>
 #include <list>
+#include <sstream>
+#include<string>
 
 using namespace std;
 
@@ -54,7 +56,8 @@ class Graph{
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();
-        float floydMarshall(int idSource, int idTarget);
+        string floydMarshall(int idSource, int idTarget);
+        int ** constroiFloyd ( int tamanho, int ** distancia);
         void dijkstra(ofstream &output_file,int idSource, int idTarget);
         void printGraph(ofstream &output_file);
 
@@ -64,6 +67,7 @@ class Graph{
         float greedRactiveRandom();
     private:
         //Auxiliar methods
+        stringstream aux;
 
 };
 
