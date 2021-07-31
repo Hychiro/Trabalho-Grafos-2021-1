@@ -145,7 +145,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         int x;
         cout << "Digite o id o noh a ser pesquisado: ";
         cin >> x;
-        graph->fechoTransitivoDireto(x);
+        graph->fechoTransitivoIndireto(x);
         break;
     }
         //Caminho mínimo entre dois vértices usando Dijkstra;

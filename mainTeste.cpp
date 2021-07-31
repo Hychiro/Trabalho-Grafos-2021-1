@@ -38,7 +38,7 @@ int main()
     Node *p = grafo->getFirstNode();
     Edge *aux = p->getFirstEdge();
     grafo->printGraph(output_file);
-    grafo->fechoTransitivoDireto(7);
+    grafo->fechoTransitivoIndireto(7);
     grafo->deepthFirstSearch(output_file,8);
     output_file.close();
 
