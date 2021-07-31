@@ -11,6 +11,7 @@
 #include <ctime>
 #include <float.h>
 #include <iomanip>
+#include <string>
 
 using namespace std;
 
@@ -298,9 +299,45 @@ Node *Graph::getNode(int id)
 
 //Function that prints a set of edges belongs breadth tree
 
-float Graph::floydMarshall(int idSource, int idTarget)
+string Graph::floydMarshall(int idSource, int idTarget)
 {
-    return 0;
+   int tamanho = getOrder();
+    aux.str(string());
+    Node* aux_node = first_node;
+    int** distancia;
+    distancia = constroiFloyd(tamanho, distancia);
+
+    aux << "caminho minimo entre os pares" << idSource <<"e"<< idTarget << "=" << distancia[idTarget - 1][idTarget -1] << endl;
+
+    for(int i=0; i< tamanho; i++){
+        aux <<"[";
+        for(int j=0; j< tamanho; j++){
+            if(distancia[i][j] != INFINITY)
+            {aux << distancia[i][j]<<".";}
+
+            else{ aux<< distancia[i][j]<<".";}
+            if(j == tamanho -1)
+            aux<< "]\n";
+        }
+    }
+    return aux.str();
+}
+int** Graph::constroiFloyd(int tamanho, int** distancia) {
+    // funcao para utilizar a lista de adjacencia e para usar o algoritmo de Floyd
+    //falta lista de adjacencia aqui
+    for ( int c = 0; c < tamanho; c++ ) {
+        for ( int i = 0; i < tamanho; i++ ) {
+            if ( i != c ) {
+                for ( int j = 0; j < tamanho; j++ ) {
+                    if ( distancia[i][c] != INFINITY && distancia[c][j] != INFINITY ) {
+                        if ( distancia[i][j] > distancia[i][c] + distancia[c][j] || distancia[i][j] == INFINITY )
+                            distancia[i][j] = distancia[i][c] + distancia[c][j];
+                    }
+                }
+            }
+        }
+    }
+    return distancia;
 }
 
 void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
