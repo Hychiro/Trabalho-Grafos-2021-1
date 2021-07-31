@@ -44,15 +44,20 @@ class Graph{
         Node* getNode(int id);
         void insertAllNodes();
 
+
+        void fechoTransitivoDireto(int id);
+        void deepthFirstSearch(ofstream &output_file, int x);
+        void deepthFirstSearch(int preDeProfund[]);
+        void auxDeepthFirstSearch(bool verify[], int preDeProfund[], Node *v);
+
         void topologicalSorting();
-        void deepthFirstSearch(ofstream& output_file, int id);
-        int auxDeepthFirstSearch(ofstream &output_file, Node* p, bool verify[], int i, int targetId);
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();
         float floydMarshall(int idSource, int idTarget);
         void dijkstra(ofstream &output_file,int idSource, int idTarget);
         void printGraph(ofstream &output_file);
+
         //methods phase1
         float greed();
         float greedRandom();

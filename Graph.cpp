@@ -51,9 +51,10 @@ Graph::~Graph()
 
 void Graph::printGraph(ofstream &output_file)
 {
+    output_file << "Printano o Grafo" << endl;
     Node *p = this->first_node;
     Edge *aux = p->getFirstEdge();
-    output_file << "Printano o Grafo" << endl;
+
     while (p != NULL)
     {
 
@@ -385,86 +386,153 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
     output_file << endl;
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////FECHO TRANSITIVO E BUSCAS///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void Graph::fechoTransitivoDireto(int id)
+{
+    ofstream output_file;
+    cout<<"Os procedimentos serao salvos em um arquivo avulso com o nome do metodo."<<endl;
+    
+    output_file.open("C://Users//Usuario//Documents//repositorio//Trabalho-Grafos-2021-1//fechoTransitivoIndireto.txt");
+
+
+    int *preDeProfund = new int[this->order];
+    //chama a busca para conseguir o preDeProfund;
+    bool vemDaFecho = true;
+    deepthFirstSearch(preDeProfund);
+    //parametro para olhar o vetor;
+    int i = id;
+    //auxiliares
+    int *vetAux = new int[this->order];
+    for (int j = 0; j < this->order; j++)
+    {
+        vetAux[j] = 0;
+    }
+    int k = 0;
+    //processo de salvar os dados;
+    output_file << "Fecho Transitivo indireto:" << endl;
+    output_file << " R-(" << id << ") = {";
+    while (i != -2)
+    {
+        i = i - 1;
+        vetAux[k] = preDeProfund[i];
+        i = preDeProfund[i];
+        k++;
+        
+    }   
+
+    for (int p=k-1; p >= 0; p--)
+    {
+        if (vetAux[p] != -2)
+        {
+            output_file << " " << vetAux[p];
+        }
+    }
+    output_file << "}" << endl;
+}
+
+
+////deepthFirstSearch 1 (do fecho transitivo indireto)
+void Graph::deepthFirstSearch(ofstream &output_file, int x)
+{
+    //Cria vetor verificador e o vetor predecessor de profundidade
+    bool *verify = new bool[this->order];
+    int *preDeProfund = new int[this->order];
+
+    int idParametro;
+    for (int i = 0; i < this->order; i++)
+    {
+        verify[i] = false;
+        preDeProfund[i] = -1;
+    }
+    //cria o vetor auxiliar
+    Node *aux;
+    //verifica o no de entrada para começar a busca
+    //Para todo v em G
+    for (Node *p = this->first_node; p != NULL; p = p->getNextNode())
+    {
+        idParametro = p->getId() - 1;
+        //Se v não visitado entao
+        if (!verify[idParametro])
+        {
+            preDeProfund[idParametro] = -2;
+            //AUX-BuscaPorProfundidade (G,v)
+            auxDeepthFirstSearch(verify, preDeProfund, p);
+        }
+    }
+
+    output_file << "Printando O vetor de profundidade" << endl;
+    output_file << "< ";
+    for (int k = 0; k < this->order; k++)
+    {
+        output_file << preDeProfund[k] << " ";
+    }
+    output_file << ">" << endl;
+}
+////deepthFirstSearch 2
+void Graph::deepthFirstSearch(int preDeProfund[])
+{
+    //Cria vetor verificador e o vetor predecessor de profundidade
+    bool *verify = new bool[this->order];
+
+    int idParametro;
+    for (int i = 0; i < this->order; i++)
+    {
+        verify[i] = false;
+        preDeProfund[i] = -1;
+    }
+    //cria o vetor auxiliar
+    Node *aux;
+    //verifica o no de entrada para começar a busca
+    //Para todo v em G
+    for (Node *p = this->first_node; p != NULL; p = p->getNextNode())
+    {
+        idParametro = p->getId() - 1;
+        //Se v não visitado entao
+        if (!verify[idParametro])
+        {
+            preDeProfund[idParametro] = -2;
+            //AUX-BuscaPorProfundidade (G,v)
+            auxDeepthFirstSearch(verify, preDeProfund, p);
+        }
+    }
+}
+void Graph::auxDeepthFirstSearch(bool verify[], int preDeProfund[], Node *v)
+{
+    //Protocolo inicial.
+    int idParametro = v->getId() - 1;
+
+    Node *aux;
+    //Marca v como visitado
+    verify[idParametro] = true;
+
+    //Para todo w em Adj(v)
+    for (Edge *p = v->getFirstEdge(); p != NULL; p = p->getNextEdge())
+    {
+
+        idParametro = p->getTargetId() - 1;
+        //Se w não visitado então
+        if (!verify[idParametro])
+        {
+            //Inserir aresta na arvore
+            preDeProfund[idParametro] = v->getId();
+
+            aux = getNode(p->getTargetId());
+            //AUX-BuscaPorProfundidade (G,w)
+            auxDeepthFirstSearch(verify, preDeProfund, aux);
+        }
+    }
+}
+
 //function that prints a topological sorting
 void topologicalSorting()
 {
 }
 
-void Graph::deepthFirstSearch(ofstream &output_file, int targetedId)
-{
-    if (!searchNode(targetedId))
-    {
-        cout << " Esse noh nao existe " << endl;
-    }
-    else
-    {
-        output_file << "Printando o caminho da raiz ate o noh" << endl;
-        int i = 0;
-        bool *verify = new bool[getOrder()];
-        for (int k = 0; k < getOrder(); k++)
-        {
-
-            verify[k] = false;
-        }
-
-        i = auxDeepthFirstSearch(output_file, this->first_node, verify, i, targetedId);
-        cout << " valor de i(equivale a quantidade de nos passados): " << i << endl;
-        output_file << first_node->getId() << endl;
-    }
-}
-
-int Graph::auxDeepthFirstSearch(ofstream &output_file, Node *p, bool verify[], int i, int targetedId)
-{
-    // falta detalhe para caso nao seja conexo e para caso seja direcionado  porem sem caminho.
-
-    // retorna o valor de i, para quando achar o no,
-    if (p->getId() == targetedId)
-    {
-        verify[first_node->getId() - 1] = true;
-        return i;
-    }
-    // retorna o valor de i, para quando chegar em um ponto sem volta,
-    else if (verify[p->getId() - 1])
-    {
-        return i;
-    }
-    //mantem a recursividade até tudo ser completado,
-    else
-    {
-        Edge *aux = p->getFirstEdge();
-        // fala q a procura passou por aqui
-        if (!verify[p->getId() - 1])
-        {
-            verify[p->getId() - 1] = true;
-        }
-        // verifica as arestas disponiveis
-        while (verify[aux->getTargetId() - 1])
-        {
-            aux = aux->getNextEdge();
-        }
-
-        //faz a leitura pra direita da lista de aresta,
-        if (aux != NULL)
-        {
-            Node *sup = p;
-            p = getNode(aux->getTargetId());
-
-            i = auxDeepthFirstSearch(output_file, p, verify, i + 1, targetedId); // se eu igualar a um i aqui eu tenho o numero de vertices visitados
-                                                                                 // verifica se ta voltano da recursividade apos ter achado, caso contrario, bota o algoritimo pra continuar a procurar do vertice anterior
-            if (verify[p->getId() - 1])
-            {
-                i = auxDeepthFirstSearch(output_file, sup, verify, i + 1, targetedId); // faz a continuação da procura
-            }
-        }
-        else
-        {
-            return i + 1;
-        }
-        //cout << p->getId() << endl;
-        output_file << p->getId() << " -- ";
-        return i;
-    }
-}
 Graph *getVertexInduced(int *listIdNodes)
 {
 }

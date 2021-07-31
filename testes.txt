@@ -1,7 +1,12 @@
-765 
-
-
-
-
-
-
+Printano o Grafo
+1 -- 2
+2 -- 3
+3 -- 4
+3 -- 5
+4 -- 6
+6 -- 7
+8 -- 7
+9 -- 8
+10 -- 9
+Printando O vetor de profundidade
+< -2 1 2 3 3 4 6 -2 -2 -2 >

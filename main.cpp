@@ -91,9 +91,8 @@ Graph *leituraInstancia(ifstream &input_file, int directed, int weightedEdge, in
     int order;
     int numEdges;
 
-    
     //Pegando a ordem do grafo
-    input_file >> order ;
+    input_file >> order;
 
     //Criando objeto grafo
     Graph *graph = new Graph(order, directed, weightedEdge, weightedNode);
@@ -101,7 +100,7 @@ Graph *leituraInstancia(ifstream &input_file, int directed, int weightedEdge, in
     //Leitura de arquivo
     while (input_file >> idNodeSource >> idNodeTarget)
     {
-        
+
         graph->insertEdge(idNodeSource, idNodeTarget, 0);
     }
 
@@ -143,7 +142,10 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
     //Subgrafo induzido por um conjunto de vértices X;
     case 1:
     {
-
+        int x;
+        cout << "Digite o id o noh a ser pesquisado: ";
+        cin >> x;
+        graph->fechoTransitivoDireto(x);
         break;
     }
         //Caminho mínimo entre dois vértices usando Dijkstra;
@@ -155,7 +157,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         int y;
         cout << "Digite o id o noh para ir: ";
         cin >> y;
-        graph->dijkstra(output_file,x,y);
+        graph->dijkstra(output_file, x, y);
         break;
     }
 

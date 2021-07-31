@@ -34,11 +34,12 @@ int main()
     
     int order = grafo->getOrder();
     cout << "Ordem: "<< order << endl;
-
+    int *vetPrev = new int[grafo->getOrder()];
     Node *p = grafo->getFirstNode();
     Edge *aux = p->getFirstEdge();
     grafo->printGraph(output_file);
-    grafo->deepthFirstSearch(output_file, 8);
+    grafo->fechoTransitivoDireto(7);
+    grafo->deepthFirstSearch(output_file,8);
     output_file.close();
 
     return 0;
