@@ -141,7 +141,7 @@ void Graph::insertNode(int id)
     this->last_node = p;
 }
 void Graph::insertAllNodes()
-{
+{ // ta comentado por enquanto só pra ser mais pratico.
     cout << " Escolha:" << endl;
     cout << " - 1 para colocar o id manualmente." << endl;
     cout << " - 2 para colocar de maneira automatica, porem pre-determinada." << endl;
