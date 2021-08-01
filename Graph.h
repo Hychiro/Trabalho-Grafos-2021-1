@@ -46,7 +46,7 @@ class Graph{
         Node* getNode(int id);
         void insertAllNodes();
 
-
+        void fechoTransitivoDireto(ofstream &output_file, int id);
         void fechoTransitivoIndireto(int id);
         void deepthFirstSearch(ofstream &output_file, int x);
         void deepthFirstSearch(int preDeProfund[]);
