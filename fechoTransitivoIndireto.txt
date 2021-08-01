@@ -1,2 +1,0 @@
-Fecho Transitivo indireto:
- R-(7) = { 1 2 3 4 6}

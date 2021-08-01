@@ -429,12 +429,93 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
+{
+    
+//com o id do vértice acha o vertice que deve ser analisado
+int idParametro=id - 1;
+//cria um vetor que marca quais vértices ja foram analisados
+bool visitados[this->order];
+//cria o vetor fecho transitivo direto
+bool FTD[this->order];
+//cria uma fila que diz quais vertices ainda precisam ser analisados
+queue<int> fila;
+//adiciona o vertice inicial nele
+fila.push(id);
+
+for (int i=0;i<this->order;i++)
+    {
+    visitados[i]=false;
+    FTD[i]=false;
+    }
+
+
+//começa iteração (enquanto a fila não estiver vazia repita)
+while(!(fila.empty()))
+    {
+    //pega um vértice a ser analisado da fila
+    int aux=fila.front();
+    int IdAnalisado=aux-1;
+    Node *V;
+    V=getNode(fila.front());
+    //exclui ele da fila
+    fila.pop();
+    //verifica se o vértice a ser analisado ja foi analisado. (se ele ja foi acaba essa iteração)
+    if (visitados[IdAnalisado]==false)
+        {   
+            //marca o vértice como visitado;
+            visitados[IdAnalisado]=true;
+            //adiciona ele no vetor fecho transitivo direto
+            FTD[IdAnalisado]=true;
+            //adiciona todos os vértices adjacentes a ele na fila
+            for (Edge *it = V->getFirstEdge(); it != NULL; it = it->getNextEdge())
+            {
+                int verticeAdjacente = it->getTargetId();
+                fila.push(verticeAdjacente);
+            }
+        }
+    }
+
+    //imprimir o FTD
+    output_file <<"O conjunto FTD do vértice "<< id <<" é: {";
+    int contador=0;
+    for (int i=0;i<this->order;i++)
+    {
+        if(FTD[i]==true)
+        {
+        contador++;
+        }
+    }
+    for (int i=0;i<this->order;i++)
+    {
+        if(FTD[i]==true)
+        {
+            if(contador-1>i)
+            {
+                output_file <<i+1<< ", ";
+            }
+            else if(contador-1==i)
+            {
+                output_file <<i+1;
+            }
+
+        }
+    }
+    output_file <<"}";
+    output_file.close();
+
+}
+
+
+
+
+
 void Graph::fechoTransitivoIndireto(int id)
 {
     ofstream output_file;
     cout<<"Os procedimentos serao salvos em um arquivo avulso com o nome do metodo."<<endl;
     
-    output_file.open("C://Users//Usuario//Documents//repositorio//Trabalho-Grafos-2021-1//fechoTransitivoIndireto.txt");
+    output_file.open("C://Users//mathe//OneDrive//Área de Trabalho//Grafos 2//Trabalho-Grafos-2021-1//fechoTransitivoInDireto.txt");
 
 
     int *preDeProfund = new int[this->order];

@@ -114,7 +114,7 @@ int menu()
 
     cout << "MENU" << endl;
     cout << "----" << endl;
-    cout << "[1] Subgrafo induzido por conjunto de vértices" << endl;
+    cout << "[1] fechoTransitivoIndireto" << endl;
     cout << "[2] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
     cout << "[3] Caminho Mínimo entre dois vértices - Floyd" << endl;
     cout << "[4] Árvore Geradora Mínima de Prim" << endl;
@@ -139,7 +139,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
     switch (selecao)
     {
 
-    //Subgrafo induzido por um conjunto de vértices X;
+    //fechoTransitivoIndireto;
     case 1:
     {
         int x;
@@ -148,16 +148,13 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         graph->fechoTransitivoIndireto(x);
         break;
     }
-        //Caminho mínimo entre dois vértices usando Dijkstra;
+        //fechoTransitivoDireto;
     case 2:
     {
         int x;
         cout << "Digite o id o noh a ser pesquisado: ";
         cin >> x;
-        int y;
-        cout << "Digite o id o noh para ir: ";
-        cin >> y;
-        graph->dijkstra(output_file, x, y);
+        graph->fechoTransitivoDireto(output_file, x);
         break;
     }
 

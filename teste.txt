@@ -1,0 +1,14 @@
+Id do vértice retirado da fila: 1
+Id do vértice retirado da fila: 2
+Id do vértice retirado da fila: 4
+Id do vértice retirado da fila: 1
+Id do vértice retirado da fila: 3
+Id do vértice retirado da fila: 6
+Id do vértice retirado da fila: 3
+Id do vértice retirado da fila: 1
+Id do vértice retirado da fila: 2
+Id do vértice retirado da fila: 4
+Id do vértice retirado da fila: 5
+Id do vértice retirado da fila: 2
+Id do vértice retirado da fila: 3
+O conjunto FTD do vértice 1 é: {1, 2, 3, 4, 5, 6}
