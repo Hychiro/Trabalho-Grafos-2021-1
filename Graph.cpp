@@ -1,4 +1,3 @@
-#include "Graph.h"
 #include "Node.h"
 #include "Edge.h"
 #include <iostream>
@@ -12,6 +11,7 @@
 #include <float.h>
 #include <iomanip>
 #include <string>
+
 
 using namespace std;
 
@@ -27,7 +27,7 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->directed = directed;
     this->weighted_edge = weighted_edge;
     this->weighted_node = weighted_node;
-    this->conexGraph = false;
+     this->conexGraph = false;
     this->first_node = NULL;
     this->last_node = NULL;
     this->number_edges = 0;
@@ -142,11 +142,11 @@ void Graph::insertNode(int id)
     this->last_node = p;
 }
 void Graph::insertAllNodes()
-{
+{ 
     for (int i = 0; i < this->order; i++)
     {
-
-        insertNode(i + 1);
+               insertNode(i + 1);         
+        
     }
 }
 
@@ -192,6 +192,7 @@ void Graph::removeNode(int id) // pfv dps me ajudem a revisar esse removeNode
             Node *nextN;
             Node *aux;
             Edge *sup;
+            int count_edges = 0;
 
             p = getNode(id);
 
@@ -207,17 +208,16 @@ void Graph::removeNode(int id) // pfv dps me ajudem a revisar esse removeNode
                 last_node = previousN;
             }
             // dps arrumar pra ser algo mais bonito, usando  remove edge, q eu n sei usar...
-            if (directed)
-            { /* sei implementa esse n...
-                for (Node *i = first_node; i != NULL; i->getNextNode())
+            if (directed)// verifica se grafo e direcionado
+            { 
+                aux = this->first_node;
+                while (aux!=NULL) //percorrendo todos os nos
                 {
-                    for (Edge *k = p->getFirstEdge(); k != NULL; k->getNextEdge())
-                    {
-                        
-                        
-                    }
+                    //conta  as arestas removidas e remove-as
+                    count_edges += aux->removeEdge(id,this->directed,aux);
+                    aux = aux->getNextNode(); 
                 }
-            */
+                
             }
             else
             {
@@ -280,13 +280,13 @@ Node *Graph::getNode(int id)
 
 string Graph::floydMarshall(int idSource, int idTarget)
 {
-    int tamanho = getOrder();
+   int tamanho = getOrder();
     aux.str(string());
-    Node *aux_node = first_node;
-    int **distancia;
+    Node* aux_node = first_node;
+    int** distancia;
     distancia = constroiFloyd(tamanho, distancia);
 
-    aux << "caminho minimo entre os pares" << idSource << "e" << idTarget << "=" << distancia[idTarget - 1][idTarget - 1] << endl;
+    aux << "caminho minimo entre os pares" << idSource <<"e"<< idTarget << "=" << distancia[idTarget - 1][idTarget -1] << endl;
 
     for (int i = 0; i < tamanho; i++)
     {
@@ -308,22 +308,24 @@ string Graph::floydMarshall(int idSource, int idTarget)
     }
     return aux.str();
 }
-
-int **Graph::constroiFloyd(int tamanho, int **distancia)
-{
+int** Graph::constroiFloyd(int tamanho, int** distancia)
+ {
     // funcao para utilizar a lista de adjacencia e para usar o algoritmo de Floyd
     //falta lista de adjacencia aqui
-    for (int c = 0; c < tamanho; c++)
+    for ( int c = 0; c < tamanho; c++ ) 
     {
-        for (int i = 0; i < tamanho; i++)
+        // Escolhendo todos os vértices como fonte, um por um
+        for ( int i = 0; i < tamanho; i++ ) 
         {
-            if (i != c)
+            // Escolhendo todos os vértices como destino
+            if ( i != c ) 
             {
-                for (int j = 0; j < tamanho; j++)
+                for ( int j = 0; j < tamanho; j++ ) 
                 {
-                    if (distancia[i][c] != INFINITY && distancia[c][j] != INFINITY)
+                    // Se o vértice k estiver no caminho mais curto de i para j, em seguida, atualize o valor de dist [i] [j]
+                    if ( distancia[i][c] != INFINITY && distancia[c][j] != INFINITY ) 
                     {
-                        if (distancia[i][j] > distancia[i][c] + distancia[c][j] || distancia[i][j] == INFINITY)
+                        if ( distancia[i][j] > distancia[i][c] + distancia[c][j] || distancia[i][j] == INFINITY )
                             distancia[i][j] = distancia[i][c] + distancia[c][j];
                     }
                 }
@@ -716,17 +718,76 @@ void Graph::auxDeepthFirstSearch(bool verify[], int preDeProfund[], Node *v)
         }
     }
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////CAMINHAMENTO,ALGORITMOS E ORDENACAO TOPOLOGICA///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void topologicalSorting()
-{
-}
 
+// função que imprime uma classificação topológica
+int *Graph::topologicalSorting()
+{
+    int *vetor = new int(this->order);//alocando o vetor para ordenaçao topologica
+    if (this->graphtemCiclo())
+    // verifica se o grafo tem circuito ou nao
+    return nullptr;
+    else{
+            int i =0;
+            Edge *auxAres;
+            Node *auxNo;
+            queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
+            //procurando nos com enttrada =0
+            for (auxNo=this->first_node;auxNo!=nullptr;auxNo = auxNo->getNextNode())
+            {   if (auxNo->getInDegree()==0)// se entrada  = 0
+                {
+                    filaTopologica.push(auxNo); //coloca os nos corretos na fila
+                }
+            }
+            while (!filaTopologica.empty())// enquanto fila e vazia
+            {
+                vetor[i] = filaTopologica.front()->getId(); //coloca o id do no a ser removido da fila
+                auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no 
+                filaTopologica.pop(); //remve da fila
+                while (auxAres != nullptr){
+                    auxNo = this->getNode(auxAres->getTargetId());//pega o no vizinho
+                    auxNo->decrementInDegree(); //decrementa a entrada
+                    if(auxNo->getInDegree()==0){ //se a entrada = 0
+                    filaTopologica.push(auxNo);
+                }
+            } i++;
+        }
+        return vetor;  //retorna a classificação topologica em um vetor
+    }
+    
+}
+//verifica se grafo tem ciclo
+bool Graph::graphtemCiclo()
+{
+    int *s = this->componentesConectados();
+    list<int> auxC;
+    // coloca os components em uma lista
+    for (int i = 0; i < this->order; i++){
+        auxC.push_back(s[i]);
+    }// Então a lista é classificada
+    auxC.sort();
+
+    for (list<int>::iterator i = auxC.begin(); i !=  auxC.end();){
+     int prev = *i;
+        i++;
+        // Se houver componentes iguais, o gráfo é cíclico,
+         // entao o grafo tem um circuito
+        if (prev == *i)
+            return true;
+    }
+        // Se  forem diferentes entre eles, o grafo nao tem circuito
+    return false;
+}
+// função que encontra o componente conectado de um nó
+int* Graph::componentesConectados(){
+    //funcao retorna se grafo 
+}
+/*
 Graph *getVertexInduced(int *listIdNodes)
 {
 }
@@ -736,4 +797,4 @@ Graph *agmKuskal()
 }
 Graph *agmPrim()
 {
-}
+}*/

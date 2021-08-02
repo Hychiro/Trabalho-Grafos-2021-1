@@ -1,6 +1,9 @@
 /**************************************************************************************************
  * Implementation of the TAD Graph
 **************************************************************************************************/
+/**************************************************************************************************
+ * Implementation of the TAD Graph
+**************************************************************************************************/
 
 #ifndef GRAPH_H_INCLUDED
 #define GRAPH_H_INCLUDED
@@ -56,7 +59,9 @@ class Graph{
 
         void auxDeepthFirstSearch(bool verify[], int preDeProfund[], Node *v);
 
-        void topologicalSorting();
+        int * topologicalSorting();
+        bool graphtemCiclo();
+        int* componentesConectados();
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();
