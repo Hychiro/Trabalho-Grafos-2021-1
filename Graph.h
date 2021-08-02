@@ -22,6 +22,7 @@ class Graph{
         bool directed;
         bool weighted_edge;
         bool weighted_node;
+        bool conexGraph;
         Node* first_node;
         Node* last_node;
 
@@ -47,9 +48,12 @@ class Graph{
         void insertAllNodes();
 
         void fechoTransitivoDireto(ofstream &output_file, int id);
-        void fechoTransitivoIndireto(int id);
-        void deepthFirstSearch(ofstream &output_file, int x);
-        void deepthFirstSearch(int preDeProfund[]);
+        void fechoTransitivoIndireto(ofstream &output_file, int id);
+
+        void deepthFirstSearch3(ofstream &output_file, int x);
+        void deepthFirstSearch2(int preDeProfund[], int start,int id);
+        void deepthFirstSearch1(int preDeProfund[]);
+
         void auxDeepthFirstSearch(bool verify[], int preDeProfund[], Node *v);
 
         void topologicalSorting();

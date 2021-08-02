@@ -145,7 +145,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         int x;
         cout << "Digite o id o noh a ser pesquisado: ";
         cin >> x;
-        graph->fechoTransitivoIndireto(x);
+        graph->fechoTransitivoIndireto(output_file,x);
         break;
     }
         //fechoTransitivoDireto;
@@ -203,7 +203,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         int x;
         cout << "Digite o id o noh a ser pesquisado: ";
         cin >> x;
-        graph->deepthFirstSearch(output_file, x);
+        graph->deepthFirstSearch3(output_file, x);
         break;
     }
     default:
