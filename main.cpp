@@ -101,7 +101,7 @@ Graph *leituraInstancia(ifstream &input_file, int directed, int weightedEdge, in
     while (input_file >> idNodeSource >> idNodeTarget)
     {
 
-        graph->insertEdge(idNodeSource, idNodeTarget, 0);
+        graph->insertEdge(idNodeSource, idNodeTarget, 1);
     }
 
     return graph;
@@ -115,13 +115,13 @@ int menu()
     cout << "MENU" << endl;
     cout << "----" << endl;
     cout << "[1] fechoTransitivoIndireto" << endl;
-    cout << "[2] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
+    cout << "[2] Fecho Transitivo Direto" << endl;
     cout << "[3] Caminho Mínimo entre dois vértices - Floyd" << endl;
     cout << "[4] Árvore Geradora Mínima de Prim" << endl;
     cout << "[5] Árvore Geradora Mínima de Kruskal" << endl;
     cout << "[6] Imprimir caminhamento em largura" << endl;
     cout << "[7] Imprimir ordenacao topológica" << endl;
-    cout << "[8] Algoritmo Guloso" << endl;
+    cout << "[8] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
     cout << "[9] Algoritmo Guloso Randomizado " << endl;
     cout << "[10] Algoritmo Guloso Randomizado Reativo" << endl;
     cout << "[11] Printando o Grafo" << endl;
@@ -189,6 +189,16 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
     case 7:
     {
 
+        break;
+    }
+    case 8:
+    {
+        int x,y;
+        cout << "Digite o id Source: ";
+        cin >> x;
+        cout << "Digite o id Target: ";
+        cin >> y;
+        graph->dijkstra(output_file, x ,y);
         break;
     }
     case 11:

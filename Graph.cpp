@@ -1,5 +1,6 @@
 #include "Node.h"
 #include "Edge.h"
+#include "Graph.h"
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -345,7 +346,8 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
     //a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????)
     //e o segundo valor seja o vetor (inteiro ou node???)
 
-    priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> fila;
+    typedef pair<int, int> pi;
+    priority_queue<pi, vector<pi>, greater<pi> > fila;
 
     //Iniciar todas as distancias como inifinito, todos vertices como não visitados e todos predecessores como inexistentes(-1)
     for (int i = 0; i < this->order; i++)
@@ -358,43 +360,50 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
     }
 
     distancia[idSource - 1] = 0; //Distancia do vertice inicial até ele mesmo é 0
-    vertice_predecessor[idSource - 1] = -1;
+    vertice_predecessor[idSource - 1] = -2;
 
     //inserir o vertice inicial na fila
-    fila.push(make_pair(distancia[idSource - 1], this->getNode(idSource)));
+    fila.push(make_pair(distancia[idSource - 1], idSource));
     //iteraçao
+    pair<int, int> top = fila.top();
+    output_file << top.first << " " << top.second<<endl;
     while (!fila.empty())
     {
-
-        pair<int, Node *> distancia_no = fila.top();  //copia par (vertice e distancia) do topo
-        Node *verticeAnalisado = distancia_no.second; //obtem o vértice copiado no passo anterior
+        output_file <<" entrou no while " <<endl;
+        pair<int, int> distancia_no = fila.top();  //copia par (vertice e distancia) do topo
+        output_file << distancia_no.first << " " << distancia_no.second<<endl;
+        int idVertice = distancia_no.second;
+        Node *verticeAnalisado = this->getNode(idVertice); //obtem o vértice copiado no passo anterior
         fila.pop();                                   //remove da fila
 
         //verifica se o vértice ja foi visitado
-        if (visitados[verticeAnalisado->getId() - 1] == false)
+        if ((visitados[verticeAnalisado->getId() - 1]) == false)
         {
+            output_file <<"esse vértice não foi visitado ainda" <<endl;
             //marca como visitado
             visitados[verticeAnalisado->getId() - 1] = true;
-
+                int i =1;
             // percorre os vértices adjacentes  do vertice analisado
-            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
+            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it=it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
-                int verticeAdjacente = it->getTargetId() - 1;
+                int verticeAdjacente = it->getTargetId()-1;
                 int custo_aresta = it->getWeight();
+                output_file << "vértice adjacente "<< i << " id:" << verticeAdjacente + 1 << " custo da aresta: "<< custo_aresta <<endl;
+                i= i+1;
 
                 //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
                 if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId() - 1] + custo_aresta))
                 {
+                    output_file <<"atuazlizando distancia do vértice " << i << endl;
                     //atualiza a distancia do vertice Adjacente e insere na fila
                     distancia[verticeAdjacente] = distancia[verticeAnalisado->getId() - 1] + custo_aresta;
                     vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
-                    fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
+                    fila.push(make_pair(distancia[verticeAdjacente],verticeAdjacente+1));
                 }
             }
         }
     }
-    output_file << "teste de mesa 1" << endl;
     int contador = 0;
     int vetorId[this->order];
     for (int o = 0; o < this->order; o++)
@@ -402,18 +411,16 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
         output_file << vertice_predecessor[o] << " e ";
     }
     output_file << endl;
-    for (int j = idTarget; vertice_predecessor[j - 1] != -1; j = vertice_predecessor[j - 1])
+    for (int j = idTarget; vertice_predecessor[j - 1] != -2; j = vertice_predecessor[j - 1])
     {
         vetorId[contador] = vertice_predecessor[j - 1];
         contador++;
     }
     output_file << "valor contador: " << contador << endl;
-    output_file << "teste de mesa 2" << endl;
     for (int k = 0; k < contador; k++)
     {
         output_file << vetorId[k] << " -- ";
     }
-    output_file << "teste de mesa 3" << endl;
     output_file << endl;
 }
 
