@@ -731,14 +731,14 @@ int *Graph::topologicalSorting()
     int *vetor = new int(this->order);//alocando o vetor para ordenaçao topologica
     if (this->graphtemCiclo())
     // verifica se o grafo tem circuito ou nao
-    return nullptr;
+    return NULL;
     else{
             int i =0;
             Edge *auxAres;
             Node *auxNo;
             queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
             //procurando nos com enttrada =0
-            for (auxNo=this->first_node;auxNo!=nullptr;auxNo = auxNo->getNextNode())
+            for (auxNo=this->first_node;auxNo!=NULL;auxNo = auxNo->getNextNode())
             {   if (auxNo->getInDegree()==0)// se entrada  = 0
                 {
                     filaTopologica.push(auxNo); //coloca os nos corretos na fila
@@ -749,7 +749,7 @@ int *Graph::topologicalSorting()
                 vetor[i] = filaTopologica.front()->getId(); //coloca o id do no a ser removido da fila
                 auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no 
                 filaTopologica.pop(); //remve da fila
-                while (auxAres != nullptr){
+                while (auxAres != NULL){
                     auxNo = this->getNode(auxAres->getTargetId());//pega o no vizinho
                     auxNo->decrementInDegree(); //decrementa a entrada
                     if(auxNo->getInDegree()==0){ //se a entrada = 0
