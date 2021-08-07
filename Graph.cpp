@@ -1,5 +1,6 @@
 #include "Node.h"
 #include "Edge.h"
+#include "Graph.h"
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -399,14 +400,11 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
     vertice_predecessor[idSource - 1] = -2;//Predecessor do vertice inicial é tido como -2
 
     //inserir o vertice inicial na fila
-    fila.push(make_pair(distancia[idSource - 1], this->getNode(idSource)));
+    fila.push(make_pair(distancia[idSource - 1], idSource));
     //iteraçao
     while (!fila.empty())
     {
-         output_file <<endl <<endl;
-        output_file <<" entrou no while " <<endl;
         pair<int, int> distancia_no = fila.top();//copia par (id do vertice e distancia) do topo
-        output_file << distancia_no.first << " " << distancia_no.second<<endl;
         int idVertice = distancia_no.second;
         Node *verticeAnalisado = this->getNode(idVertice); //obtem o vértice a ser analisado a partir de seu id
         fila.pop();//remove o par da fila
@@ -416,38 +414,63 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
         {
             //marca como visitado
             visitados[verticeAnalisado->getId() - 1] = true;
-            int i =1;
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it=it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
                 int verticeAdjacente = it->getTargetId() - 1;
                 int custo_aresta = it->getWeight();
-                output_file << "vértice adjacente "<< i << " id:" << verticeAdjacente + 1 << " custo da aresta: "<< custo_aresta <<endl;
                 //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
                 if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId() - 1] + custo_aresta))
                 {
                     //atualiza a distancia do vertice Adjacente e insere na fila
                     distancia[verticeAdjacente] = distancia[verticeAnalisado->getId() - 1] + custo_aresta;
                     vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
-                    fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
+                    fila.push(make_pair(distancia[verticeAdjacente],verticeAdjacente+1));
                 }
-                i= i+1;
             }
         }
     }
 
 
 
-    if(vertice_predecessor[idTarget-1]!=-1 && vertice_predecessor[idTarget-1]!=-2){
-    
-    int contador = 0;
-    int a=vertice_predecessor[idTarget-1];
-    output_file <<endl<< idTarget;
-    while (a!=-2 && a!=-1)
+    if(vertice_predecessor[idTarget-1]!=-1 && vertice_predecessor[idTarget-1]!=-2)
+    {
+        if (this->directed)
         {
-             output_file << " -- " << a;
-             a=vertice_predecessor[a-1];
+            list<int> caminho;
+            int a=vertice_predecessor[idTarget-1];
+            while (vertice_predecessor[a-1]!=-2 && vertice_predecessor[a-1]!=-1)
+                {
+                    caminho.push_front(a);
+                    a=vertice_predecessor[a-1];
+                }
+            output_file << idSource ;
+            for(int i=0;!(caminho.empty());i++)
+                {
+                    output_file << " -> " << caminho.front();
+                    caminho.pop_front();
+                }
+            output_file <<" -> " << idTarget; 
         }
+
+        if(!(this->directed))
+        {
+            list<int> caminho;
+            int a=vertice_predecessor[idTarget-1];
+            while (vertice_predecessor[a-1]!=-2 && vertice_predecessor[a-1]!=-1)
+                {
+                    caminho.push_front(a);
+                    a=vertice_predecessor[a-1];
+                }
+            output_file << idSource ;
+                for(int i=0;!(caminho.empty());i++)
+                {
+                    output_file << " -- " << caminho.front();
+                    caminho.pop_front();
+                }
+                output_file <<" -- " << idTarget;
+        }
+
     }else if (vertice_predecessor[idTarget-1]==-1)
     {
         output_file<<"não existe caminho"<<endl;

@@ -7,6 +7,7 @@
         "*.tcc": "cpp",
         "fstream": "cpp",
         "istream": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "list": "cpp"
     }
 }
