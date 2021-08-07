@@ -11,6 +11,7 @@
 #include <float.h>
 #include <iomanip>
 #include <string>
+#define INF 99999999
 
 using namespace std;
 
@@ -374,52 +375,54 @@ int **Graph::constroiFloyd(int tamanho, int **distancia)
 
 void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
 {
-    int distancia[this->order];
-    int vertice_predecessor[this->order];
+    int distancia[this->order];//vetor que faz uma analogia entre id e distancia
+    int vertice_predecessor[this->order];//vetor que faz uma analogia entre id e vértice predecessor do caminho minimo
     bool visitados[this->order]; //vetor que verifica se o vértice ja foi visitado
 
-    //Fazer uma fila de prioridade. (priority_queue)????
-    //a ideia é fazer uma fila onde o primeiro valor seja a distancia (inteiro ou Edge????)
-    //e o segundo valor seja o vetor (inteiro ou node???)
-
-    priority_queue<pair<int, Node *>, vector<pair<int, Node *>>, greater<pair<int, Node *>>> fila;
+    //Fazer uma fila de prioridade minima.
+    //a ideia é fazer uma fila onde o primeiro valor seja a distancia 
+    //e o segundo valor seja o id do vértice
+    typedef pair<int, int> pi;
+    priority_queue<pi, vector<pi>, greater<pi> > fila;
 
     //Iniciar todas as distancias como inifinito, todos vertices como não visitados e todos predecessores como inexistentes(-1)
     for (int i = 0; i < this->order; i++)
     {
 
-        distancia[this->order] = 99999999;
+        distancia[i] = 4203209;
 
         visitados[i] = false;
         vertice_predecessor[i] = -1;
     }
 
     distancia[idSource - 1] = 0; //Distancia do vertice inicial até ele mesmo é 0
-    vertice_predecessor[idSource - 1] = -1;
+    vertice_predecessor[idSource - 1] = -2;//Predecessor do vertice inicial é tido como -2
 
     //inserir o vertice inicial na fila
     fila.push(make_pair(distancia[idSource - 1], this->getNode(idSource)));
     //iteraçao
     while (!fila.empty())
     {
-
-        pair<int, Node *> distancia_no = fila.top();  //copia par (vertice e distancia) do topo
-        Node *verticeAnalisado = distancia_no.second; //obtem o vértice copiado no passo anterior
-        fila.pop();                                   //remove da fila
+         output_file <<endl <<endl;
+        output_file <<" entrou no while " <<endl;
+        pair<int, int> distancia_no = fila.top();//copia par (id do vertice e distancia) do topo
+        output_file << distancia_no.first << " " << distancia_no.second<<endl;
+        int idVertice = distancia_no.second;
+        Node *verticeAnalisado = this->getNode(idVertice); //obtem o vértice a ser analisado a partir de seu id
+        fila.pop();//remove o par da fila
 
         //verifica se o vértice ja foi visitado
         if (visitados[verticeAnalisado->getId() - 1] == false)
         {
             //marca como visitado
             visitados[verticeAnalisado->getId() - 1] = true;
-
-            // percorre os vértices adjacentes  do vertice analisado
-            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
+            int i =1;
+            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it=it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
                 int verticeAdjacente = it->getTargetId() - 1;
                 int custo_aresta = it->getWeight();
-
+                output_file << "vértice adjacente "<< i << " id:" << verticeAdjacente + 1 << " custo da aresta: "<< custo_aresta <<endl;
                 //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
                 if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId() - 1] + custo_aresta))
                 {
@@ -428,30 +431,32 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
                     vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
                     fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
                 }
+                i= i+1;
             }
         }
     }
-    output_file << "teste de mesa 1" << endl;
+
+
+
+    if(vertice_predecessor[idTarget-1]!=-1 && vertice_predecessor[idTarget-1]!=-2){
+    
     int contador = 0;
-    int vetorId[this->order];
-    for (int o = 0; o < this->order; o++)
+    int a=vertice_predecessor[idTarget-1];
+    output_file <<endl<< idTarget;
+    while (a!=-2 && a!=-1)
+        {
+             output_file << " -- " << a;
+             a=vertice_predecessor[a-1];
+        }
+    }else if (vertice_predecessor[idTarget-1]==-1)
     {
-        output_file << vertice_predecessor[o] << " e ";
-    }
-    output_file << endl;
-    for (int j = idTarget; vertice_predecessor[j - 1] != -1; j = vertice_predecessor[j - 1])
+        output_file<<"não existe caminho"<<endl;
+    }else if (vertice_predecessor[idTarget-1]==-2)
     {
-        vetorId[contador] = vertice_predecessor[j - 1];
-        contador++;
+        output_file<<"Id Sorurce é o mesmo que IdTarget"<<endl;
     }
-    output_file << "valor contador: " << contador << endl;
-    output_file << "teste de mesa 2" << endl;
-    for (int k = 0; k < contador; k++)
-    {
-        output_file << vetorId[k] << " -- ";
-    }
-    output_file << "teste de mesa 3" << endl;
-    output_file << endl;
+    
+    
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -470,9 +475,9 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
     //cria o vetor fecho transitivo direto
     bool FTD[this->order];
     //cria uma fila que diz quais vertices ainda precisam ser analisados
-    queue<int> fila;
+    list<int> fila;
     //adiciona o vertice inicial nele
-    fila.push(id);
+    fila.push_front(id);
 
     for (int i = 0; i < this->order; i++)
     {
@@ -489,7 +494,7 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
         Node *V;
         V = getNode(fila.front());
         //exclui ele da fila
-        fila.pop();
+        fila.pop_front();
         //verifica se o vértice a ser analisado ja foi analisado. (se ele ja foi acaba essa iteração)
         if (visitados[IdAnalisado] == false)
         {
@@ -501,7 +506,7 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
             for (Edge *it = V->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 int verticeAdjacente = it->getTargetId();
-                fila.push(verticeAdjacente);
+                fila.push_front(verticeAdjacente);
             }
         }
     }
@@ -520,11 +525,12 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
     {
         if (FTD[i] == true)
         {
-            if (contador - 1 > i)
+            if (contador - 1 > 0)
             {
                 output_file << i + 1 << ", ";
+                contador--;
             }
-            else if (contador - 1 == i)
+            else if (contador - 1 == 0)
             {
                 output_file << i + 1;
             }
@@ -549,8 +555,6 @@ void Graph::fechoTransitivoIndireto(ofstream &output_file, int id)
     cin >> start;
     cout << " O resultado aparecera em um arquivo .txt" << endl;
     deepthFirstSearch(novoGrafo, start, id);
-    output_file << novoGrafo->getOrder() << endl;
-    novoGrafo->printGraph(output_file);
     output_file << endl;
     output_file << "Novamente, Como acho que eh possivel do fecho variar de acordo com a direcao de onde se comeca a busca," << endl;
     output_file << "ja que ele, o fecho transitivo indireto, representa os antescedente de vertice em um grafo." << endl;

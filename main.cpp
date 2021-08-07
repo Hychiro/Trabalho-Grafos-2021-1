@@ -38,7 +38,7 @@ Graph *leitura(ifstream &input_file, int directed, int weightedEdge, int weighte
         while (input_file >> idNodeSource >> idNodeTarget)
         {
 
-            graph->insertEdge(idNodeSource, idNodeTarget, 0);
+            graph->insertEdge(idNodeSource, idNodeTarget, 1);
         }
     }
     else if (graph->getWeightedEdge() && !graph->getWeightedNode())
@@ -60,7 +60,7 @@ Graph *leitura(ifstream &input_file, int directed, int weightedEdge, int weighte
         while (input_file >> idNodeSource >> nodeSourceWeight >> idNodeTarget >> nodeTargetWeight)
         {
 
-            graph->insertEdge(idNodeSource, idNodeTarget, 0);
+            graph->insertEdge(idNodeSource, idNodeTarget, 1);
             graph->getNode(idNodeSource)->setWeight(nodeSourceWeight);
             graph->getNode(idNodeTarget)->setWeight(nodeTargetWeight);
         }
