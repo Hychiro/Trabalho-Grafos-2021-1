@@ -12,6 +12,7 @@
 #include <float.h>
 #include <iomanip>
 #include <string>
+#define INF 99999999
 
 
 using namespace std;
@@ -352,7 +353,7 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
     for (int i = 0; i < this->order; i++)
     {
 
-        distancia[this->order] = 99999999;
+        distancia[i] = 4203209;
 
         visitados[i] = false;
         vertice_predecessor[i] = -1;
@@ -366,50 +367,62 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
     //iteraçao
     while (!fila.empty())
     {
+         output_file <<endl <<endl;
+        output_file <<" entrou no while " <<endl;
         pair<int, int> distancia_no = fila.top();//copia par (id do vertice e distancia) do topo
+        output_file << distancia_no.first << " " << distancia_no.second<<endl;
         int idVertice = distancia_no.second;
         Node *verticeAnalisado = this->getNode(idVertice); //obtem o vértice a ser analisado a partir de seu id
-        fila.pop();//remove o parda fila
+        fila.pop();//remove o par da fila
 
         //verifica se o vértice ja foi visitado
         if ((visitados[verticeAnalisado->getId() - 1]) == false)
         {
+            output_file <<"esse vértice não foi visitado ainda" <<endl;
             //marca como visitado
             visitados[verticeAnalisado->getId() - 1] = true;
+            int i =1;
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it=it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
                 int verticeAdjacente = it->getTargetId()-1;
                 int custo_aresta = it->getWeight();
+                output_file << "vértice adjacente "<< i << " id:" << verticeAdjacente + 1 << " custo da aresta: "<< custo_aresta <<endl;
                 //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
                 if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId() - 1] + custo_aresta))
                 {
+                    output_file <<"atuazlizando distancia do vértice " << i << endl;
                     //atualiza a distancia do vertice Adjacente e insere na fila
                     distancia[verticeAdjacente] = distancia[verticeAnalisado->getId() - 1] + custo_aresta;
                     vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
                     fila.push(make_pair(distancia[verticeAdjacente],verticeAdjacente+1));
                 }
+                i= i+1;
             }
         }
     }
+
+
+
+    if(vertice_predecessor[idTarget-1]!=-1 && vertice_predecessor[idTarget-1]!=-2){
+    
     int contador = 0;
-    int vetorId[this->order];
-    for (int o = 0; o < this->order; o++)
+    int a=vertice_predecessor[idTarget-1];
+    output_file <<endl<< idTarget;
+    while (a!=-2 && a!=-1)
+        {
+             output_file << " -- " << a;
+             a=vertice_predecessor[a-1];
+        }
+    }else if (vertice_predecessor[idTarget-1]==-1)
     {
-        output_file << vertice_predecessor[o] << " e ";
-    }
-    output_file << endl;
-    /*for (int j = idTarget; vertice_predecessor[j - 1] != -2; j = vertice_predecessor[j - 1])
+        output_file<<"não existe caminho"<<endl;
+    }else if (vertice_predecessor[idTarget-1]==-2)
     {
-        vetorId[contador] = vertice_predecessor[j - 1];
-        contador++;
+        output_file<<"Id Sorurce é o mesmo que IdTarget"<<endl;
     }
-    output_file << "valor contador: " << contador << endl;
-    for (int k = 0; k < contador; k++)
-    {
-        output_file << vetorId[k] << " -- ";
-    }
-    output_file << endl;*/
+    
+    
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -428,9 +441,9 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
     //cria o vetor fecho transitivo direto
     bool FTD[this->order];
     //cria uma fila que diz quais vertices ainda precisam ser analisados
-    queue<int> fila;
+    list<int> fila;
     //adiciona o vertice inicial nele
-    fila.push(id);
+    fila.push_front(id);
 
     for (int i = 0; i < this->order; i++)
     {
@@ -447,7 +460,7 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
         Node *V;
         V = getNode(fila.front());
         //exclui ele da fila
-        fila.pop();
+        fila.pop_front();
         //verifica se o vértice a ser analisado ja foi analisado. (se ele ja foi acaba essa iteração)
         if (visitados[IdAnalisado] == false)
         {
@@ -459,7 +472,7 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
             for (Edge *it = V->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 int verticeAdjacente = it->getTargetId();
-                fila.push(verticeAdjacente);
+                fila.push_front(verticeAdjacente);
             }
         }
     }
@@ -478,11 +491,12 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
     {
         if (FTD[i] == true)
         {
-            if (contador - 1 > i)
+            if (contador - 1 > 0)
             {
                 output_file << i + 1 << ", ";
+                contador--;
             }
-            else if (contador - 1 == i)
+            else if (contador - 1 == 0)
             {
                 output_file << i + 1;
             }
