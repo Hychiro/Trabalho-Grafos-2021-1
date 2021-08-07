@@ -21,7 +21,7 @@ int main()
     ofstream output_file;
     output_file.open("C://Users//Usuario//Documents//repositorio//Trabalho-Grafos-2021-1//testes.txt");
 
-    Graph *grafo = new Graph(10, true, false, false);
+    Graph *grafo = new Graph(16, true, false, false);
     grafo->insertEdge(1,2,0);
     grafo->insertEdge(2,3,0);
     grafo->insertEdge(3,4,0);
@@ -31,15 +31,22 @@ int main()
     grafo->insertEdge(8,7,0);
     grafo->insertEdge(9,8,0);
     grafo->insertEdge(10,9,0);
+    grafo->insertEdge(5,15,0);
+    grafo->insertEdge(15,16,0);
+    grafo->insertEdge(14,15,0);
+    grafo->insertEdge(12,13,0);
+    grafo->insertEdge(13,11,0);
+    grafo->insertEdge(11,7,0);
+   
     
     int order = grafo->getOrder();
     cout << "Ordem: "<< order << endl;
-    int *vetPrev = new int[grafo->getOrder()];
-    Node *p = grafo->getFirstNode();
-    Edge *aux = p->getFirstEdge();
     grafo->printGraph(output_file);
-    grafo->fechoTransitivoIndireto(7);
-    grafo->deepthFirstSearch(output_file,8);
+    grafo->fechoTransitivoIndireto(output_file, 7);
+    int x;
+    cin>>x;
+    Graph* novoGrafo= grafo->caminhamentoDeProfundidade(x);
+    novoGrafo->printGraph(output_file);
     output_file.close();
 
     return 0;

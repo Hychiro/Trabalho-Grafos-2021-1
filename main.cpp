@@ -119,7 +119,7 @@ int menu()
     cout << "[3] Caminho Mínimo entre dois vértices - Floyd" << endl;
     cout << "[4] Árvore Geradora Mínima de Prim" << endl;
     cout << "[5] Árvore Geradora Mínima de Kruskal" << endl;
-    cout << "[6] Imprimir caminhamento em largura" << endl;
+    cout << "[6] Imprimir caminhamento em Profundidade" << endl;
     cout << "[7] Imprimir ordenacao topológica" << endl;
     cout << "[8] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
     cout << "[9] Algoritmo Guloso Randomizado " << endl;
@@ -179,10 +179,14 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         break;
     }
 
-        //Busca em largura;
+        //Busca em Profundidade;
     case 6:
     {
-
+        int x;
+        cout << "Digite o id o noh a por onde começara o caminhamento: ";
+        cin >> x;
+        Graph* novoGrafo= graph->caminhamentoDeProfundidade(x);
+        novoGrafo->printGraph(output_file);
         break;
     }
         //Ordenação Topologica;
@@ -206,14 +210,6 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
 
         graph->printGraph(output_file);
 
-        break;
-    }
-    case 12:
-    {
-        int x;
-        cout << "Digite o id o noh a ser pesquisado: ";
-        cin >> x;
-        graph->deepthFirstSearch3(output_file, x);
         break;
     }
     default:

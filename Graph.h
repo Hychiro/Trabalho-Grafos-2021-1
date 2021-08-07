@@ -32,6 +32,7 @@ class Graph{
     public:
         //Constructor
         Graph(int order, bool directed, bool weighted_edge, bool weighted_node);
+        Graph(bool directed, bool weighted_edge, bool weighted_node);
         //Destructor
         ~Graph();
         //Getters
@@ -53,12 +54,12 @@ class Graph{
         void fechoTransitivoDireto(ofstream &output_file, int id);
         void fechoTransitivoIndireto(ofstream &output_file, int id);
 
-        void deepthFirstSearch3(ofstream &output_file, int x);
-        void deepthFirstSearch2(int preDeProfund[], int start,int id);
-        void deepthFirstSearch1(int preDeProfund[]);
+        void deepthFirstSearch(Graph* novoGrafo, int start,int id);
+        void deepthFirstSearch(Graph *novoGrafo, int start);
 
-        void auxDeepthFirstSearch(bool verify[], int preDeProfund[], Node *v);
+        void auxDeepthFirstSearch(bool verify[], Graph* novoGrafo, Node *v);
 
+        Graph* caminhamentoDeProfundidade(int x);
         int * topologicalSorting();
         bool graphtemCiclo();
         int* componentesConectados();
