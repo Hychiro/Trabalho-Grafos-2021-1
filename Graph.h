@@ -62,7 +62,6 @@ class Graph{
         Graph* caminhamentoDeProfundidade(int x);
         int * topologicalSorting();
         bool graphtemCiclo();
-        int* componentesConectados();
         Graph* getVertexInduced(int* listIdNodes);
         Graph* agmKuskal();
         Graph* agmPrim();

@@ -133,70 +133,92 @@ int menu()
     return selecao;
 }
 
+
 void selecionar(int selecao, Graph *graph, ofstream &output_file)
 {
 
     switch (selecao)
     {
 
-    //fechoTransitivoIndireto;
-    case 1:
-    {
-        int x;
-        cout << "Digite o id o noh a ser pesquisado: ";
-        cin >> x;
-        graph->fechoTransitivoIndireto(output_file,x);
-        break;
-    }
+        //fechoTransitivoIndireto;
+        case 1:
+        {
+            int x;
+            cout << "Digite o id o noh a ser pesquisado: ";
+            cin >> x;
+            graph->fechoTransitivoIndireto(output_file,x);
+            break;
+        }
         //fechoTransitivoDireto;
-    case 2:
-    {
-        int x;
-        cout << "Digite o id o noh a ser pesquisado: ";
-        cin >> x;
-        graph->fechoTransitivoDireto(output_file, x);
-        break;
-    }
-
+        case 2:
+        {
+            int x;
+            cout << "Digite o id o noh a ser pesquisado: ";
+            cin >> x;
+            graph->fechoTransitivoDireto(output_file, x);
+            break;
+        }
         //Caminho mínimo entre dois vértices usando Floyd;
-    case 3:
-    {
-
-        break;
-    }
-
+        case 3:
+        {   cout<<"Caminho minimo por Floyd "<< endl;
+            cout<<"Digite o vertice de origem:"<< endl;
+            int origem;
+            cin>>origem;
+            cout<<"Digite o vertice de destino:"<<endl;
+            int destino;
+            cin>> destino;
+            graph->floydMarshall(origem,destino);
+            break;
+        }
         //AGM - Kruscal;
-    case 4:
-    {
+        case 4:
+        {
 
-        break;
-    }
+            break;
+        }
 
         //AGM Prim;
-    case 5:
-    {
+        case 5:
+        {
 
         break;
-    }
+        }
 
         //Busca em Profundidade;
-    case 6:
-    {
+        case 6:
+        {
         int x;
         cout << "Digite o id o noh a por onde começara o caminhamento: ";
         cin >> x;
         Graph* novoGrafo= graph->caminhamentoDeProfundidade(x);
         novoGrafo->printGraph(output_file);
         break;
-    }
+        }
         //Ordenação Topologica;
-    case 7:
-    {
-
-        break;
-    }
-    case 8:
-    {
+        case 7:
+        {
+         if(graph->getDirected())
+                {
+                    int* ordTop = graph->topologicalSorting();
+                    if ((ordTop != NULL))
+                    {
+                        output_file << "Ordenação Topologica" << endl;
+                        for (int i = 0; i < graph->getOrder(); i++)
+                        {
+                            output_file<< ordTop[i];
+                            output_file<<endl;
+                        }           
+                    }
+                    else{
+                        output_file <<"Grafo possui ciclo"<<endl;
+                    }
+                }else{
+                        output_file<<"grafo não direcionado"<<endl;
+                }
+            break;
+        }
+        case 8:
+        {
         int x,y;
         cout << "Digite o id Source: ";
         cin >> x;
@@ -204,19 +226,21 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         cin >> y;
         graph->dijkstra(output_file, x ,y);
         break;
-    }
-    case 11:
-    {
+        }
+        case 11:
+        {
 
         graph->printGraph(output_file);
 
         break;
-    }
-    default:
-    {
+        }
+        default:
+        {
         cout << " Error!!! invalid option!!" << endl;
-    }
-    }
+    
+        }  
+    }  
+    
 }
 
 int mainMenu(ofstream &output_file, Graph *graph)

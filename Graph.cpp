@@ -1,6 +1,6 @@
+#include "Graph.h"
 #include "Node.h"
 #include "Edge.h"
-#include "Graph.h"
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -12,7 +12,7 @@
 #include <float.h>
 #include <iomanip>
 #include <string>
-#define INF 99999999
+
 
 using namespace std;
 
@@ -28,7 +28,7 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->directed = directed;
     this->weighted_edge = weighted_edge;
     this->weighted_node = weighted_node;
-    this->conexGraph = false;
+     this->conexGraph = false;
     this->first_node = NULL;
     this->last_node = NULL;
     this->number_edges = 0;
@@ -313,19 +313,20 @@ Node *Graph::getNode(int id)
         }
         return p;
     }
+    return p;
 }
 
 //Function that prints a set of edges belongs breadth tree
 
 string Graph::floydMarshall(int idSource, int idTarget)
 {
-    int tamanho = getOrder();
+   int tamanho = getOrder();
     aux.str(string());
-    Node *aux_node = first_node;
-    int **distancia;
+    Node* aux_node = first_node;
+    int** distancia;
     distancia = constroiFloyd(tamanho, distancia);
 
-    aux << "caminho minimo entre os pares" << idSource << "e" << idTarget << "=" << distancia[idTarget - 1][idTarget - 1] << endl;
+    aux << "caminho minimo entre os pares" << idSource <<"e"<< idTarget << "=" << distancia[idTarget - 1][idTarget -1] << endl;
 
     for (int i = 0; i < tamanho; i++)
     {
@@ -347,24 +348,29 @@ string Graph::floydMarshall(int idSource, int idTarget)
     }
     return aux.str();
 }
-int **Graph::constroiFloyd(int tamanho, int **distancia)
-{
+int** Graph::constroiFloyd(int tamanho, int** distancia)
+ {
     // funcao para utilizar a lista de adjacencia e para usar o algoritmo de Floyd
     //falta lista de adjacencia aqui
-    for (int c = 0; c < tamanho; c++)
+    
+    distancia = new int* [tamanho];
+    for ( int k = 0; k < tamanho; k++ ) {
+        distancia[k] = new int [tamanho];
+    }
+    for ( int c = 0; c < tamanho; c++ ) 
     {
         // Escolhendo todos os vértices como fonte, um por um
-        for (int i = 0; i < tamanho; i++)
+        for ( int i = 0; i < tamanho; i++ ) 
         {
             // Escolhendo todos os vértices como destino
-            if (i != c)
+            if ( i != c ) 
             {
-                for (int j = 0; j < tamanho; j++)
+                for ( int j = 0; j < tamanho; j++ ) 
                 {
                     // Se o vértice k estiver no caminho mais curto de i para j, em seguida, atualize o valor de dist [i] [j]
-                    if (distancia[i][c] != INFINITY && distancia[c][j] != INFINITY)
+                    if ( distancia[i][c] != INFINITY && distancia[c][j] != INFINITY ) 
                     {
-                        if (distancia[i][j] > distancia[i][c] + distancia[c][j] || distancia[i][j] == INFINITY)
+                        if ( distancia[i][j] > distancia[i][c] + distancia[c][j] || distancia[i][j] == INFINITY )
                             distancia[i][j] = distancia[i][c] + distancia[c][j];
                     }
                 }
@@ -373,7 +379,6 @@ int **Graph::constroiFloyd(int tamanho, int **distancia)
     }
     return distancia;
 }
-
 void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
 {
     int distancia[this->order];//vetor que faz uma analogia entre id e distancia
@@ -481,13 +486,11 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
     
     
 }
-
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////FECHO TRANSITIVO E BUSCAS///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
 {
 
@@ -737,7 +740,6 @@ void Graph::auxDeepthFirstSearch(bool verify[], Graph *novoGrafo, Node *v)
 ///////////////////////////////////////////////////////CAMINHAMENTO,ALGORITMOS E ORDENACAO TOPOLOGICA///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 Graph *Graph::caminhamentoDeProfundidade(int x)
 {
 
@@ -745,75 +747,66 @@ Graph *Graph::caminhamentoDeProfundidade(int x)
     deepthFirstSearch(novoGrafo, x);
     return novoGrafo;
 }
+
 // função que imprime uma classificação topológica
 int *Graph::topologicalSorting()
-{
-    int *vetor = new int(this->order); //alocando o vetor para ordenaçao topologica
+{   
+    int *vetor = new int(this->order);//alocando o vetor para ordenaçao topologica
     if (this->graphtemCiclo())
-        // verifica se o grafo tem circuito ou nao
-        return NULL;
-    else
-    {
-        int i = 0;
-        Edge *auxAres;
-        Node *auxNo;
-        queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
-        //procurando nos com enttrada =0
-        for (auxNo = this->first_node; auxNo != NULL; auxNo = auxNo->getNextNode())
-        {
-            if (auxNo->getInDegree() == 0) // se entrada  = 0
-            {
-                filaTopologica.push(auxNo); //coloca os nos corretos na fila
-            }
-        }
-        while (!filaTopologica.empty()) // enquanto fila e vazia
-        {
-            vetor[i] = filaTopologica.front()->getId();       //coloca o id do no a ser removido da fila
-            auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no
-            filaTopologica.pop();                             //remve da fila
-            while (auxAres != NULL)
-            {
-                auxNo = this->getNode(auxAres->getTargetId()); //pega o no vizinho
-                auxNo->decrementInDegree();                    //decrementa a entrada
-                if (auxNo->getInDegree() == 0)
-                { //se a entrada = 0
-                    filaTopologica.push(auxNo);
+    // verifica se o grafo tem circuito ou nao
+    return NULL;
+    else{
+            int i =0;
+            Edge *auxAres;
+            Node *auxNo;
+            queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
+            //procurando nos com enttrada =0
+            for (auxNo=this->first_node;auxNo!=NULL;auxNo = auxNo->getNextNode())
+            {   if (auxNo->getInDegree()==0)// se entrada  = 0
+                {
+                    filaTopologica.push(auxNo); //coloca os nos corretos na fila
                 }
             }
-            i++;
+            while (!filaTopologica.empty())// enquanto fila e vazia
+            {
+                vetor[i] = filaTopologica.front()->getId(); //coloca o id do no a ser removido da fila
+                auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no 
+                filaTopologica.pop(); //remve da fila
+                while (auxAres != NULL){
+                    auxNo = this->getNode(auxAres->getTargetId());//pega o no vizinho
+                    auxNo->decrementInDegree(); //decrementa a entrada
+                    if(auxNo->getInDegree()==0){ //se a entrada = 0
+                    filaTopologica.push(auxNo);
+                }
+            } i++;
         }
-        return vetor; //retorna a classificação topologica em um vetor
+        return vetor;  //retorna a classificação topologica em um vetor
     }
+    
 }
 //verifica se grafo tem ciclo
 bool Graph::graphtemCiclo()
 {
-    int *s = this->componentesConectados();
     list<int> auxC;
     // coloca os components em uma lista
     for (int i = 0; i < this->order; i++)
     {
-        auxC.push_back(s[i]);
-    } // Então a lista é classificada
+        auxC.push_back(i);
+    }// Então a lista é classificada
     auxC.sort();
 
-    for (list<int>::iterator i = auxC.begin(); i != auxC.end();)
-    {
-        int prev = *i;
+    for (list<int>::iterator i = auxC.begin(); i !=  auxC.end();){
+     int prev = *i;
         i++;
         // Se houver componentes iguais, o gráfo é cíclico,
-        // entao o grafo tem um circuito
+         // entao o grafo tem um circuito
         if (prev == *i)
             return true;
     }
-    // Se  forem diferentes entre eles, o grafo nao tem circuito
+        // Se  forem diferentes entre eles, o grafo nao tem circuito
     return false;
 }
-// função que encontra o componente conectado de um nó
-int *Graph::componentesConectados()
-{
-    //funcao retorna se grafo
-}
+
 /*
 Graph *getVertexInduced(int *listIdNodes)
 {
