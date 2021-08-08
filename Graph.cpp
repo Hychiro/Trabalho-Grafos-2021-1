@@ -870,12 +870,116 @@ Unir as subárvores que contêm u e v.
 contador ¬ contador + 1
 fim-se
 fim-enquanto
-}
+}*/
 
-Graph *agmPrim()
+
+
+
+
+
+Graph *Graph::agmPrim()
 {
+    int Tamanho,x;
+    cout<<"Digite o numero de vértices que serão adicionados no subgrafo vértice induzido"<<endl;
+    cin>>Tamanho;
+    int *listaNos=new int [this->order];
+    for (int i = 0; i < this->order; i++)
+    {
+        listaNos[i]=-1;
+    }
+    for (int i = 0; i < Tamanho; i++)
+    {
+        cout<<"Digite o vértice numero " <<i+1<<endl;
+        cin>>x;
+        listaNos[i]=x;
+    }
+    
+    Graph *grafoVI;
+    grafoVI=this->getVertexInduced(listaNos);
+
+    Graph *grafoX=new Graph(this->directed,this->weighted_edge,this->weighted_node);
+    Node *p;
+    //para todo noh da lista faça
+    for (p = grafoVI->getFirstNode(); p != NULL; p=p->getNextNode())
+    {
+    grafoX->insertNode(p->getId());
+    }
+
+
+
+
+    bool adicionados [grafoX->order]; //marca quais vértices ja possuem um caminho
+    for(int i=0;i<grafoX->order;i++)
+    {
+        adicionados[i]=false;
+    }
+    adicionados[0]=true;
+
+    std::list<int> vertices;//marca quais vértices ja possuem um caminho
+    std::list<int>::iterator k; 
+    vertices.push_front(1);//adiciona o primeiro vértice na lista
+
+
+    bool todosVerticesAdicionados=false;
+
+    while(todosVerticesAdicionados==false)//repetir até ter um caminho para todos os vértices
+    {
+        Node *vertice1;//nó que vai armazenar o vértice de onde vai sair a aresta
+        Node *vertice2;//nó que vai armazenar o vértice que a aresta vai chegar
+        int menorCusto=999999999;
+
+        for (k = vertices.begin(); k != vertices.end(); k++ )//percorre todos vértices da lista
+            {
+                Node *verticeAnalisado= grafoVI->getNode(*k);
+                for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())//percorre todas arestas de grafoVI
+                    {
+                        int verticeAdjacente = it->getTargetId();//pega o vértice alvo dessa aresta
+                        int custo_aresta = it->getWeight();//pega o custa dessa aresta
+
+                        if(adicionados[verticeAdjacente-1]==false)//se o vértice alvo não foi adicionado
+                            {
+                            if(menorCusto>custo_aresta)//se o custo dessa aresta for menor de todas que ja forram analisados 
+                                {
+                                    vertice1=verticeAnalisado;//lembra do nó que esta saindo essa aresta
+                                    vertice2=grafoVI->getNode(verticeAdjacente);//lembra do nó onde esta chegando essa arresta
+                                    menorCusto=custo_aresta;//lembra do custo dessa aresta
+                                }
+                        }
+                    }
+            }
+
+
+            //adiciona uma aresta entre o vértice 1 e 2 que possui custo = menorCusto
+            grafoX->insertEdge(vertice1->getId(),vertice2->getId(),menorCusto);
+
+
+            vertices.push_front(vertice2->getId());//adiciona o vertice 2 na lista vertices
+            adicionados[vertice2->getId()-1]=true;//marcar o vertice 2 como adicionado
+            int contador=0;
+            for(int i=0;i<(grafoX->order);i++)//verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
+            {
+                if (adicionados[i]==true)
+                {
+                    contador++;
+                }
+            }
+            if (contador==(grafoX->order))
+            {
+                todosVerticesAdicionados=true;
+            }
+            
+
+
+    }
+    delete[] listaNos;
+    return grafoX;
 }
 
+
+
+
+
+/*
 componente conexa:
 Procedimento COMPONENTES-CONEXAS
 Para i = 1,...,n faça
