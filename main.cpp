@@ -117,8 +117,8 @@ int menu()
     cout << "[1] fechoTransitivoIndireto" << endl;
     cout << "[2] Fecho Transitivo Direto" << endl;
     cout << "[3] Caminho Mínimo entre dois vértices - Floyd" << endl;
-    cout << "[4] Árvore Geradora Mínima de Prim" << endl;
-    cout << "[5] Árvore Geradora Mínima de Kruskal" << endl;
+    cout << "[4] Árvore Geradora Mínima de Kruskal" << endl;
+    cout << "[5] Árvore Geradora Mínima de Prim" << endl;
     cout << "[6] Imprimir caminhamento em Profundidade" << endl;
     cout << "[7] Imprimir ordenacao topológica" << endl;
     cout << "[8] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
@@ -180,7 +180,8 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         //AGM Prim;
         case 5:
         {
-
+            Graph *grafoX=graph->agmPrim();
+            grafoX->printGraph(output_file);
         break;
         }
 

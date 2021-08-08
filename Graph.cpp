@@ -972,6 +972,7 @@ Graph *Graph::agmPrim()
 
     }
     delete[] listaNos;
+
     return grafoX;
 }
 
