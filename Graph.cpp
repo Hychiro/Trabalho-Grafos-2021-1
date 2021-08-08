@@ -817,24 +817,85 @@ bool Graph::graphtemCiclo()
     return false;
 }
 
-
-/*Graph *getVertexInduced(int *listIdNodes)
+Graph *Graph::getVertexInduced(int *listIdNodes)
 {
-    
+    Graph *subGrafo = new Graph(this->directed, this->weighted_edge, this->weighted_node);
     //para todo noh da lista faça
-    for(int i=0;i<this->order)
-            //incluir noh no subgrafo
+    for (int i = 0; i < this->order; i++)
+    {
+        //incluir noh no subgrafo
+        if (searchNode(listIdNodes[i]))
+        {
+            subGrafo->insertNode(listIdNodes[i]);
+        }
+    }
+    Node *p;
+    Node *orig;
+    Edge *aux;
+    //para todo noh do subgrafo,
+    for (p = subGrafo->getFirstNode(); p != NULL; p = p->getNextNode())
+    {
+        orig = getNode(p->getId());
 
-    //para todo noh da lista,
         //verificar as arestas no grafo original.
+        for (aux = orig->getFirstEdge(); aux != NULL; aux = aux->getNextEdge())
+        {
             // se a aresta do vertice pra onde ela aponta existir
+            if (subGrafo->searchNode(aux->getTargetId())){
                 // incluir a aresta no noh do subgrafo;
-    // retorna subgrafo;
-}*/
+                subGrafo->insertEdge(p->getId(),aux->getTargetId(),aux->getWeight());
+            }
+        }
+    }
+
+// retorna subgrafo
+   return subGrafo;
+}
+
 /*
 Graph *agmKuskal()
 {
+Criar uma lista L com as arestas ordenadas em
+ordem crescente de pesos.
+Criar |V| subárvores contendo cada uma um nó
+isolado.
+F ¬ Æ
+contador ¬ 0
+Enquanto contador < |V|-1 e L 1 Æ faça
+Seja (u,v) a próxima aresta de L.
+L ¬ L – {(u,v)}
+Se u e v não estão na mesma subárvore então
+F ¬ F È {(u,v)}
+Unir as subárvores que contêm u e v.
+contador ¬ contador + 1
+fim-se
+fim-enquanto
 }
+
 Graph *agmPrim()
 {
-}*/
+}
+
+componente conexa:
+Procedimento COMPONENTES-CONEXAS
+Para i = 1,...,n faça
+visitado(i) ¬ 0
+fim-para
+componente ¬ 0
+Para i = 1,...,n faça
+Se visitado(i) = 0 então
+componente ¬ componente + 1
+PROF(i, componente)
+fim-se
+fim-para
+Fim
+
+Procedimento PROF(v, marca)
+visitado(v) ¬ marca
+Para cada nó w adjacente a v faça
+Se visitado(w) = 0 então
+PROF(w, marca)
+fim-se
+fim-para
+Fim
+*/
