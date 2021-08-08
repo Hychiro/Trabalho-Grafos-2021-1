@@ -1,5 +1,6 @@
 #include "Node.h"
 #include "Edge.h"
+#include "Graph.h"
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -83,7 +84,8 @@ void Graph::printGraph(ofstream &output_file)
             p = p->getNextNode();
         }
     }
-    else{
+    else
+    {
         while (p != NULL)
         {
 
@@ -97,7 +99,7 @@ void Graph::printGraph(ofstream &output_file)
             p = p->getNextNode();
         }
     }
-        output_file << endl;
+    output_file << endl;
     output_file << endl;
 }
 
@@ -375,15 +377,15 @@ int **Graph::constroiFloyd(int tamanho, int **distancia)
 
 void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
 {
-    int distancia[this->order];//vetor que faz uma analogia entre id e distancia
-    int vertice_predecessor[this->order];//vetor que faz uma analogia entre id e vértice predecessor do caminho minimo
-    bool visitados[this->order]; //vetor que verifica se o vértice ja foi visitado
+    int distancia[this->order];           //vetor que faz uma analogia entre id e distancia
+    int vertice_predecessor[this->order]; //vetor que faz uma analogia entre id e vértice predecessor do caminho minimo
+    bool visitados[this->order];          //vetor que verifica se o vértice ja foi visitado
 
     //Fazer uma fila de prioridade minima.
-    //a ideia é fazer uma fila onde o primeiro valor seja a distancia 
+    //a ideia é fazer uma fila onde o primeiro valor seja a distancia
     //e o segundo valor seja o id do vértice
     typedef pair<int, int> pi;
-    priority_queue<pi, vector<pi>, greater<pi> > fila;
+    priority_queue<pi, vector<pi>, greater<pi>> fila;
 
     //Iniciar todas as distancias como inifinito, todos vertices como não visitados e todos predecessores como inexistentes(-1)
     for (int i = 0; i < this->order; i++)
@@ -395,68 +397,69 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
         vertice_predecessor[i] = -1;
     }
 
-    distancia[idSource - 1] = 0; //Distancia do vertice inicial até ele mesmo é 0
-    vertice_predecessor[idSource - 1] = -2;//Predecessor do vertice inicial é tido como -2
+    distancia[idSource - 1] = 0;            //Distancia do vertice inicial até ele mesmo é 0
+    vertice_predecessor[idSource - 1] = -2; //Predecessor do vertice inicial é tido como -2
 
     //inserir o vertice inicial na fila
-    fila.push(make_pair(distancia[idSource - 1], this->getNode(idSource)));
+    fila.push(make_pair(distancia[idSource - 1], idSource));
     //iteraçao
     while (!fila.empty())
     {
-         output_file <<endl <<endl;
-        output_file <<" entrou no while " <<endl;
-        pair<int, int> distancia_no = fila.top();//copia par (id do vertice e distancia) do topo
-        output_file << distancia_no.first << " " << distancia_no.second<<endl;
+        output_file << endl
+                    << endl;
+        output_file << " entrou no while " << endl;
+        pair<int, int> distancia_no = fila.top(); //copia par (id do vertice e distancia) do topo
+        output_file << distancia_no.first << " " << distancia_no.second << endl;
         int idVertice = distancia_no.second;
         Node *verticeAnalisado = this->getNode(idVertice); //obtem o vértice a ser analisado a partir de seu id
-        fila.pop();//remove o par da fila
+        fila.pop();                                        //remove o par da fila
 
         //verifica se o vértice ja foi visitado
         if (visitados[verticeAnalisado->getId() - 1] == false)
         {
             //marca como visitado
             visitados[verticeAnalisado->getId() - 1] = true;
-            int i =1;
-            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it=it->getNextEdge())
+            int i = 1;
+            for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge())
             {
                 //obtém o vertice adjancente e o custa da aresta
                 int verticeAdjacente = it->getTargetId() - 1;
                 int custo_aresta = it->getWeight();
-                output_file << "vértice adjacente "<< i << " id:" << verticeAdjacente + 1 << " custo da aresta: "<< custo_aresta <<endl;
+                output_file << "vértice adjacente " << i << " id:" << verticeAdjacente + 1 << " custo da aresta: " << custo_aresta << endl;
                 //verificar se a distancia vértices adjacente é maior que a distancia da distancia do vertice analisado + o custa da aresta
                 if (distancia[verticeAdjacente] > (distancia[verticeAnalisado->getId() - 1] + custo_aresta))
                 {
                     //atualiza a distancia do vertice Adjacente e insere na fila
                     distancia[verticeAdjacente] = distancia[verticeAnalisado->getId() - 1] + custo_aresta;
                     vertice_predecessor[verticeAdjacente] = verticeAnalisado->getId();
-                    fila.push(make_pair(distancia[verticeAdjacente], getNode(verticeAdjacente)));
+                    fila.push(make_pair(distancia[verticeAdjacente], verticeAdjacente));
                 }
-                i= i+1;
+                i = i + 1;
             }
         }
     }
 
+    if (vertice_predecessor[idTarget - 1] != -1 && vertice_predecessor[idTarget - 1] != -2)
+    {
 
-
-    if(vertice_predecessor[idTarget-1]!=-1 && vertice_predecessor[idTarget-1]!=-2){
-    
-    int contador = 0;
-    int a=vertice_predecessor[idTarget-1];
-    output_file <<endl<< idTarget;
-    while (a!=-2 && a!=-1)
+        int contador = 0;
+        int a = vertice_predecessor[idTarget - 1];
+        output_file << endl
+                    << idTarget;
+        while (a != -2 && a != -1)
         {
-             output_file << " -- " << a;
-             a=vertice_predecessor[a-1];
+            output_file << " -- " << a;
+            a = vertice_predecessor[a - 1];
         }
-    }else if (vertice_predecessor[idTarget-1]==-1)
-    {
-        output_file<<"não existe caminho"<<endl;
-    }else if (vertice_predecessor[idTarget-1]==-2)
-    {
-        output_file<<"Id Sorurce é o mesmo que IdTarget"<<endl;
     }
-    
-    
+    else if (vertice_predecessor[idTarget - 1] == -1)
+    {
+        output_file << "não existe caminho" << endl;
+    }
+    else if (vertice_predecessor[idTarget - 1] == -2)
+    {
+        output_file << "Id Sorurce é o mesmo que IdTarget" << endl;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -541,88 +544,52 @@ void Graph::fechoTransitivoDireto(ofstream &output_file, int id)
 
 void Graph::fechoTransitivoIndireto(ofstream &output_file, int id)
 {
-    Graph *novoGrafo = new Graph(this->directed, this->weighted_edge, this->weighted_node);
-
-    //chama a busca para conseguir o preDeProfund;
-
-    cout << "Como acho que eh possivel do fecho variar de acordo com a direcao de onde se comeca a busca," << endl;
-    cout << "ja que ele, o fecho transitivo indireto, representa os antescedente de vertice em um grafo." << endl;
-    cout << "se faz necessario um ponto de referencia inicial por onde comecar a busca." << endl;
-    cout << "Por isso, escolha um vertice indo de 1 a " << this->order << " e que seja diferente de " << id;
-    cout << ", ja que queremos os antecessores desse vertice e nao ele mesmo." << endl;
-    cout << "Digite um dos vertices apresentados Acima: ";
-    int start;
-    cin >> start;
-    cout << " O resultado aparecera em um arquivo .txt" << endl;
-    deepthFirstSearch(novoGrafo, start, id);
-    output_file << endl;
-    output_file << "Novamente, Como acho que eh possivel do fecho variar de acordo com a direcao de onde se comeca a busca," << endl;
-    output_file << "ja que ele, o fecho transitivo indireto, representa os antescedente de vertice em um grafo." << endl;
-    output_file << "se faz necessario um ponto de referencia inicial por onde comecar a busca." << endl;
-    //processo de salvar os dados;
-    output_file << "Fecho Transitivo indireto em relação ao vertice " << start << " eh:" << endl;
-    //parametro para olhar o vetor;*/
-    //auxiliares
-    int *vetAux = new int[this->order];
+    bool *fti = new bool[this->order];
     bool *verify = new bool[this->order];
-    for (int j = 0; j < this->order; j++)
-    {
-        vetAux[j] = -1;
-        verify[j] = false;
-    }
-
-    Node *p = novoGrafo->getFirstNode();
-    Edge *aux = p->getFirstEdge();
-
-    while (p != NULL)
-    {
-
-        aux = p->getFirstEdge();
-
-        verify[p->getId() - 1] = true;
-
-        while (aux != NULL)
-        {
-            if (!verify[aux->getTargetId() - 1])
-            {
-                verify[aux->getTargetId() - 1] = true;
-                vetAux[aux->getTargetId() - 1] = p->getId();
-            }
-            aux = aux->getNextEdge();
-        }
-        p = p->getNextNode();
-    }
     for (int i = 0; i < this->order; i++)
     {
-        output_file << vetAux[i] << " ";
+        fti[i] = false;
+        verify[i] = false;
     }
 
-    int k = vetAux[id - 1];
-    output_file << " R-(" << id << ") = {";
-
-    while (k != -1)
+    int conta=0;
+    
+    for (Node *p = this->first_node; p != NULL; p = p->getNextNode())
     {
-
-        output_file << k;
-        k = vetAux[k - 1];
-        if (k != -1)
+        if (!verify[p->getId() - 1])
         {
-            output_file << " ";
+            verify[p->getId() - 1] = true;
+            fti[p->getId() - 1] = deepthFirstSearch1(id, p->getId());
+            if(fti[p->getId() - 1]){
+                conta++;
+            }
         }
     }
+    output_file<<"O fecho transitivo indireto de "<< id <<" eh:";
+    output_file<<"{";
 
-    //processo para uma impressao bonitinha ... soh isso mesmo ...
-
-    output_file << "}" << endl;
+    int aux = 0;
+    for(int j = 0;j<this->order;j++){
+        if (fti[j])
+        {
+            if(aux==conta-1){
+            output_file<<(j+1);
+            aux++;
+            }else{
+            output_file<<(j+1)<<", ";
+            aux++;
+            }
+        }
+    }
+    output_file<<"}"<<endl;
 }
 
-////deepthFirstSearch 2 realizar a busca por profundidade a partir de um ponto de referencia do grafo.
-void Graph::deepthFirstSearch(Graph *novoGrafo, int start, int id)
+bool Graph::deepthFirstSearch1(int id, int start)
 {
 
     //Cria vetor verificador e o vetor predecessor de profundidade
     bool *verify = new bool[this->order];
-
+    int conta = 0;
     int idParametro;
     for (int i = 0; i < this->order; i++)
     {
@@ -637,18 +604,51 @@ void Graph::deepthFirstSearch(Graph *novoGrafo, int start, int id)
 
         idParametro = p->getId() - 1;
         //Se v não visitado entao
-        if (verify[id - 1])
-        {
-            break;
-        }
+
         if (!verify[idParametro])
         {
-            novoGrafo->insertNode(p->getId());
+
             //AUX-BuscaPorProfundidade (G,v)
-            auxDeepthFirstSearch(verify, novoGrafo, p);
+            auxDeepthFirstSearch1(verify, p);
+        }
+        if (verify[id - 1])
+        {
+            delete[] verify;
+            return true;
+        }
+    }
+     delete[] verify;
+    return false;
+}
+
+void Graph::auxDeepthFirstSearch1(bool verify[], Node *v)
+{
+    //Protocolo inicial.
+    int idParametro = v->getId() - 1;
+
+    Node *aux;
+    //Marca v como visitado
+
+    verify[idParametro] = true;
+
+    //Para todo w em Adj(v)
+    for (Edge *p = v->getFirstEdge(); p != NULL; p = p->getNextEdge())
+    {
+
+        idParametro = p->getTargetId() - 1;
+        //Se w não visitado então
+
+        if (!verify[idParametro])
+        {
+
+            aux = getNode(p->getTargetId());
+            //AUX-BuscaPorProfundidade (G,w)
+            auxDeepthFirstSearch1(verify,aux);
         }
     }
 }
+
+////deepthFirstSearch realizar a busca por profundidade a partir de um ponto de referencia do grafo.
 void Graph::deepthFirstSearch(Graph *novoGrafo, int start)
 {
 
@@ -722,6 +722,7 @@ Graph *Graph::caminhamentoDeProfundidade(int x)
     deepthFirstSearch(novoGrafo, x);
     return novoGrafo;
 }
+
 // função que imprime uma classificação topológica
 int *Graph::topologicalSorting()
 {
@@ -794,6 +795,14 @@ int *Graph::componentesConectados()
 /*
 Graph *getVertexInduced(int *listIdNodes)
 {
+    //para todo noh da lista faça
+            //incluir noh no subgrafo
+
+    //para todo noh da lista,
+        //verificar as arestas no grafo original.
+            // se a aresta do vertice pra onde ela aponta existir
+                // incluir a aresta no noh do subgrafo;
+    // retorna subgrafo;
 }
 
 Graph *agmKuskal()
