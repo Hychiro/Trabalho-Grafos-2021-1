@@ -390,8 +390,8 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
     //Fazer uma fila de prioridade minima.
     //a ideia é fazer uma fila onde o primeiro valor seja a distancia
     //e o segundo valor seja o id do vértice
-    typedef pair<int, int> pi;
-    priority_queue<pi, vector<pi>, greater<pi>> fila;
+    typedef pair<int, int> o;
+    priority_queue<o, vector<o>, greater<o>> fila;
 
     //Iniciar todas as distancias como inifinito, todos vertices como não visitados e todos predecessores como inexistentes(-1)
     for (int i = 0; i < this->order; i++)
@@ -944,7 +944,7 @@ Graph *Graph::agmPrim()
                                     vertice2=grafoVI->getNode(verticeAdjacente);//lembra do nó onde esta chegando essa arresta
                                     menorCusto=custo_aresta;//lembra do custo dessa aresta
                                 }
-                        }
+                            }
                     }
             }
 
