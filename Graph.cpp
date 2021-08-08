@@ -817,10 +817,12 @@ bool Graph::graphtemCiclo()
     return false;
 }
 
-/*
-Graph *getVertexInduced(int *listIdNodes)
+
+/*Graph *getVertexInduced(int *listIdNodes)
 {
+    
     //para todo noh da lista faça
+    for(int i=0;i<this->order)
             //incluir noh no subgrafo
 
     //para todo noh da lista,
@@ -828,8 +830,8 @@ Graph *getVertexInduced(int *listIdNodes)
             // se a aresta do vertice pra onde ela aponta existir
                 // incluir a aresta no noh do subgrafo;
     // retorna subgrafo;
-}
-
+}*/
+/*
 Graph *agmKuskal()
 {
 }
