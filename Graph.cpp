@@ -834,7 +834,6 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
             subGrafo->insertNode(listIdNodes[i]);
         }
     }
-
     Node *p;
     Node *orig;
     Edge *aux;
@@ -842,7 +841,6 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
     //para todo noh do subgrafo,
     for (p = subGrafo->getFirstNode(); p != NULL; p = p->getNextNode())
     {
-
         orig = getNode(p->getId());
 
         //verificar as arestas no grafo original.
@@ -854,7 +852,6 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
             verificaSeTem = subGrafo->searchNode(aux->getTargetId());
             if (verificaSeTem)
             {
-
                 // incluir a aresta no noh do subgrafo;
                 subGrafo->insertEdge(p->getId(), aux->getTargetId(), aux->getWeight());
         
@@ -1018,16 +1015,12 @@ void Graph::getWeithlessEdge(Graph *subGrafo, int *nohAresta)
 Graph *Graph::agmPrim()
 {
     int tamanho, x;
-    cout << "Digite o numero de vertices que serão adicionados no subgrafo vertice induzido" << endl;
+    cout << "Digite o numero de vertices que serao adicionados no subgrafo vertice induzido" << endl;
     cin >> tamanho;
-    int *listaNos = new int[this->order];
-    for (int i = 0; i < this->order; i++)
-    {
-        listaNos[i] = -1;
-    }
+    int *listaNos = new int[tamanho];
     for (int i = 0; i < tamanho; i++)
     {
-        cout << "Digite o id do vertice numero " << i + 1 << endl;
+        cout << "Digite o id do proximo vertice"<< endl;
         cin >> x;
         listaNos[i] = x;
     }
@@ -1055,27 +1048,35 @@ Graph *Graph::agmPrim()
     vertices.push_front(x); //adiciona o primeiro vértice na lista
 
     bool todosVerticesAdicionados = false;
+    int a=1;
+
 
     while (todosVerticesAdicionados == false) //repetir até ter um caminho para todos os vértices
     {
-        Node *vertice1; //nó que vai armazenar o vértice de onde vai sair a aresta
-        Node *vertice2; //nó que vai armazenar o vértice que a aresta vai chegar
+        cout<<endl<<endl<<endl<<"entrando no while pela "<<a<<" vez"<<endl;
+        a++;
+        int vertice1; //nó que vai armazenar o vértice de onde vai sair a aresta
+        int vertice2; //nó que vai armazenar o vértice que a aresta vai chegar
         int menorCusto = 999999999;
 
         for (k = vertices.begin(); k != vertices.end(); k++) //percorre todos vértices da lista
         {
             Node *verticeAnalisado = grafoVI->getNode(*k);
+            cout<<"olhando o no "<<*k<<endl;
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge()) //percorre todas arestas de grafoVI
             {
                 int verticeAdjacente = it->getTargetId(); //pega o vértice alvo dessa aresta
-                int custo_aresta = it->getWeight();       //pega o custa dessa aresta
+                int custo_aresta = it->getWeight();       //pega o custo dessa aresta
+                cout<<"olhando a aresta:   "<<*k<<" -- "<<verticeAdjacente<<endl;
 
                 if (adicionados[verticeAdjacente - 1] == false) //se o vértice alvo não foi adicionado
                 {
+                    cout<<verticeAdjacente<<"  ainda nao foi adicionado nesse grafo"<<endl;
                     if (menorCusto > custo_aresta) //se o custo dessa aresta for menor de todas que ja forram analisados
                     {
-                        vertice1 = verticeAnalisado;                   //lembra do nó que esta saindo essa aresta
-                        vertice2 = grafoVI->getNode(verticeAdjacente); //lembra do nó onde esta chegando essa arresta
+                        cout<<"a aresta:   "<<*k<<" -- "<<verticeAdjacente<<"    tem o menor peso dessa iteracao ate agr" <<endl;
+                        vertice1 = verticeAnalisado->getId();                   //lembra do nó que esta saindo essa aresta
+                        vertice2 = verticeAdjacente; //lembra do nó onde esta chegando essa arresta
                         menorCusto = custo_aresta;                     //lembra do custo dessa aresta
                     }
                 }
@@ -1083,10 +1084,11 @@ Graph *Graph::agmPrim()
         }
 
         //adiciona uma aresta entre o vértice 1 e 2 que possui custo = menorCusto
-        grafoX->insertEdge(vertice1->getId(), vertice2->getId(), menorCusto);
+        cout<<"inserindo a aresta:   "<<vertice1<<" -- "<<vertice2 <<endl;
+        grafoX->insertEdge(vertice1, vertice2, menorCusto);
 
-        vertices.push_front(vertice2->getId());    //adiciona o vertice 2 na lista vertices
-        adicionados[vertice2->getId() - 1] = true; //marcar o vertice 2 como adicionado
+        vertices.push_front(vertice2);    //adiciona o vertice 2 na lista vertices
+        adicionados[vertice2 - 1] = true; //marcar o vertice 2 como adicionado
         int contador = 0;
         for (int i = 0; i < (this->order); i++) //verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
         {
