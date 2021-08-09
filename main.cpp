@@ -117,8 +117,8 @@ int menu()
     cout << "[1] fechoTransitivoIndireto" << endl;
     cout << "[2] Fecho Transitivo Direto" << endl;
     cout << "[3] Caminho Mínimo entre dois vértices - Floyd" << endl;
-    cout << "[4] Árvore Geradora Mínima de Kruskal" << endl;
-    cout << "[5] Árvore Geradora Mínima de Prim" << endl;
+    cout << "[4] Árvore Geradora Mínima de Prim" << endl;
+    cout << "[5] Árvore Geradora Mínima de Kruskal" << endl;
     cout << "[6] Imprimir caminhamento em Profundidade" << endl;
     cout << "[7] Imprimir ordenacao topológica" << endl;
     cout << "[8] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
@@ -160,16 +160,16 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         }
         //Caminho mínimo entre dois vértices usando Floyd;
         case 3:
-        {   cout<<"Caminho minimo por Floyd "<< endl;
+        {  output_file<<"Caminho minimo por Floyd:: "<< endl;
             cout<<"Digite o vertice de origem:"<< endl;
             int origem;
             cin>>origem;
             cout<<"Digite o vertice de destino:"<<endl;
             int destino;
             cin>> destino;
-            graph->floydMarshall(origem,destino);
-            break;
+            graph->floydMarshall(output_file,origem,destino);
         }
+        
         //AGM - Kruscal;
         case 4:
         {
@@ -184,7 +184,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
             grafoX->printGraph(output_file);
         break;
         }
-
+        
         //Busca em Profundidade;
         case 6:
         {
@@ -203,7 +203,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
                     int* ordTop = graph->topologicalSorting();
                     if ((ordTop != NULL))
                     {
-                        output_file << "Ordenação Topologica" << endl;
+                        output_file << "Ordenação Topologica:" << endl;
                         for (int i = 0; i < graph->getOrder(); i++)
                         {
                             output_file<< ordTop[i];
@@ -211,13 +211,14 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
                         }           
                     }
                     else{
-                        output_file <<"Grafo possui ciclo"<<endl;
+                        output_file <<"Grafo possui circuito, nao possui ordenação topologica"<<endl;
                     }
                 }else{
-                        output_file<<"grafo não direcionado"<<endl;
+                        output_file<<"Grafo não direcionado -  nao possui ordenação topologica"<<endl;
                 }
             break;
         }
+
         case 8:
         {
         int x,y;
@@ -298,7 +299,7 @@ int main(int argc, char const *argv[])
     if (input_file.is_open())
     {
 
-        graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+        graph = leituraInstancia(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
     }
     else
         cout << "Unable to open " << argv[1];

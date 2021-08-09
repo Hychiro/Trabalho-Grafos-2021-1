@@ -1,7 +1,6 @@
 #include "Graph.h"
 #include "Node.h"
 #include "Edge.h"
-#include "Graph.h"
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -13,6 +12,7 @@
 #include <float.h>
 #include <iomanip>
 #include <string>
+
 
 using namespace std;
 
@@ -28,7 +28,7 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->directed = directed;
     this->weighted_edge = weighted_edge;
     this->weighted_node = weighted_node;
-    this->conexGraph = false;
+     this->conexGraph = false;
     this->first_node = NULL;
     this->last_node = NULL;
     this->number_edges = 0;
@@ -99,7 +99,7 @@ void Graph::printGraph(ofstream &output_file)
             p = p->getNextNode();
         }
     }
-    output_file << endl;
+        output_file << endl;
     output_file << endl;
 }
 
@@ -319,68 +319,100 @@ Node *Graph::getNode(int id)
 
 //Function that prints a set of edges belongs breadth tree
 
-string Graph::floydMarshall(int idSource, int idTarget)
+void Graph::floydMarshall(ofstream &output_file, int idSource, int idTarget)
 {
     int tamanho = getOrder();
-    aux.str(string());
-    Node *aux_node = first_node;
-    int **distancia;
+    Node* aux_node = first_node;
+    int**distancia = new int*[this->order];
     distancia = constroiFloyd(tamanho, distancia);
-
-    aux << "caminho minimo entre os pares" << idSource << "e" << idTarget << "=" << distancia[idTarget - 1][idTarget - 1] << endl;
-
-    for (int i = 0; i < tamanho; i++)
+    
+    output_file << "O menor caminho entre o No[" << idSource << "] e o No[" << idTarget << "] e: [" << distancia[idSource-1][idTarget-1] << "]"<<endl;
+    
+    Node *aux_node2 = this->first_node;
+    output_file<< " matriz das Distâncias mais curtas entre cada par de vértices:"<< endl;
+    for (int i = 0; i < this->order + 1; i++) 
     {
-        aux << "[";
-        for (int j = 0; j < tamanho; j++)
-        {
-            if (distancia[i][j] != INFINITY)
-            {
-                aux << distancia[i][j] << ".";
-            }
-
-            else
-            {
-                aux << distancia[i][j] << ".";
-            }
-            if (j == tamanho - 1)
-                aux << "]\n";
+        if (i == 0)
+            output_file << setw(7) << " ";
+        else {
+            output_file << setw(7) << aux_node2->getId();
+            aux_node2 = aux_node2->getNextNode();
         }
     }
-    return aux.str();
+    output_file<< endl;
+    aux_node2= this->first_node;
+    for (int i = 0; i < this->order; i++) 
+    {
+        for (int j = 0; j < this->order + 1; j++) {
+            if (j == 0) 
+            {
+                output_file << setw(7) << " | "<< aux_node2->getId()<< " | ";;
+                aux_node2 = aux_node2->getNextNode();
+            }
+            else {
+                if (distancia[i][j - 1] == INT_MAX/2)
+                    output_file << setw(7) << "INF" <<" | ";
+                else
+                    output_file << setw(7) << distancia[i][j - 1] << " | ";
+            }
+        }
+        output_file << endl;
+    }
 }
-int **Graph::constroiFloyd(int tamanho, int **distancia)
+int**Graph::constroiFloyd(int tamanho, int **distancia)
 {
     // funcao para utilizar a lista de adjacencia e para usar o algoritmo de Floyd
-    //falta lista de adjacencia aqui
-
-    distancia = new int *[tamanho];
+    distancia = new int*[tamanho];
     for (int k = 0; k < tamanho; k++)
     {
-        distancia[k] = new int[tamanho];
+        distancia[k] = new int[this->order];
+    }
+    Node* aux_node1 = this->first_node;
+    Node* aux_node2;
+    int peso_aresta = 1;
+
+    //matriz  com os valores de cada aresta entre os nos
+    for (int i = 0; aux_node1 != NULL; aux_node1 = aux_node1->getNextNode(), i++) {
+        aux_node2 = this->first_node;
+
+        for (int j = 0; aux_node2 != NULL; aux_node2 = aux_node2->getNextNode(), j++) 
+        {
+            Edge *aux = aux_node1->hasEdgeBetween(aux_node2->getId());
+
+            if(this->weighted_edge && aux != NULL)
+                peso_aresta  = aux->getWeight();
+
+            if (aux_node1->getId() == aux_node2->getId())
+                distancia[i][j] = 0;
+
+            else if(aux!=NULL)
+
+                distancia[i][j] = peso_aresta;
+
+            else
+                distancia[i][j] = INT_MAX/2;
+        }
     }
     for (int c = 0; c < tamanho; c++)
     {
         // Escolhendo todos os vértices como fonte, um por um
         for (int i = 0; i < tamanho; i++)
         {
-            // Escolhendo todos os vértices como destino
             if (i != c)
-            {
+            {// Escolhendo todos os vértices como destino
                 for (int j = 0; j < tamanho; j++)
                 {
-                    // Se o vértice k estiver no caminho mais curto de i para j, em seguida, atualize o valor de dist [i] [j]
-                    if (distancia[i][c] != INFINITY && distancia[c][j] != INFINITY)
-                    {
-                        if (distancia[i][j] > distancia[i][c] + distancia[c][j] || distancia[i][j] == INFINITY)
-                            distancia[i][j] = distancia[i][c] + distancia[c][j];
-                    }
+                    //Se o vértice k estiver no caminho mais curto de i para j, em seguida, atualize o valor de dist [i] [j]
+                    if (distancia[i][j] > distancia[i][c] + distancia[c][j] && distancia[i][c] + distancia[i][j]>0)
+                           distancia[i][j] = distancia[i][c] + distancia[c][j];
                 }
+
             }
         }
     }
     return distancia;
 }
+
 void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
 {
     int distancia[this->order];           //vetor que faz uma analogia entre id e distancia
@@ -489,6 +521,7 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
         }
     }
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////FECHO TRANSITIVO E BUSCAS///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -758,43 +791,39 @@ Graph *Graph::caminhamentoDeProfundidade(int x)
 
 // função que imprime uma classificação topológica
 int *Graph::topologicalSorting()
-{
-    int *vetor = new int(this->order); //alocando o vetor para ordenaçao topologica
+{   
+    int *vetor = new int(this->order);//alocando o vetor para ordenaçao topologica
     if (this->graphtemCiclo())
-        // verifica se o grafo tem circuito ou nao
-        return NULL;
-    else
-    {
-        int i = 0;
-        Edge *auxAres;
-        Node *auxNo;
-        queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
-        //procurando nos com enttrada =0
-        for (auxNo = this->first_node; auxNo != NULL; auxNo = auxNo->getNextNode())
-        {
-            if (auxNo->getInDegree() == 0) // se entrada  = 0
-            {
-                filaTopologica.push(auxNo); //coloca os nos corretos na fila
-            }
-        }
-        while (!filaTopologica.empty()) // enquanto fila e vazia
-        {
-            vetor[i] = filaTopologica.front()->getId();       //coloca o id do no a ser removido da fila
-            auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no
-            filaTopologica.pop();                             //remve da fila
-            while (auxAres != NULL)
-            {
-                auxNo = this->getNode(auxAres->getTargetId()); //pega o no vizinho
-                auxNo->decrementInDegree();                    //decrementa a entrada
-                if (auxNo->getInDegree() == 0)
-                { //se a entrada = 0
-                    filaTopologica.push(auxNo);
+    // verifica se o grafo tem circuito ou nao
+    return NULL;
+    else{
+            int i =0;
+            Edge *auxAres;
+            Node *auxNo;
+            queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
+            //procurando nos com enttrada =0
+            for (auxNo=this->first_node;auxNo!=NULL;auxNo = auxNo->getNextNode())
+            {   if (auxNo->getInDegree()==0)// se entrada  = 0
+                {
+                    filaTopologica.push(auxNo); //coloca os nos corretos na fila
                 }
             }
-            i++;
+            while (!filaTopologica.empty())// enquanto fila e vazia
+            {
+                vetor[i] = filaTopologica.front()->getId(); //coloca o id do no a ser removido da fila
+                auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no 
+                filaTopologica.pop(); //remve da fila
+                while (auxAres != NULL){
+                    auxNo = this->getNode(auxAres->getTargetId());//pega o no vizinho
+                    auxNo->decrementInDegree(); //decrementa a entrada
+                    if(auxNo->getInDegree()==0){ //se a entrada = 0
+                    filaTopologica.push(auxNo);
+                }
+            } i++;
         }
-        return vetor; //retorna a classificação topologica em um vetor
+        return vetor;  //retorna a classificação topologica em um vetor
     }
+    
 }
 //verifica se grafo tem ciclo
 bool Graph::graphtemCiclo()
@@ -804,22 +833,20 @@ bool Graph::graphtemCiclo()
     for (int i = 0; i < this->order; i++)
     {
         auxC.push_back(i);
-    } // Então a lista é classificada
+    }// Então a lista é classificada
     auxC.sort();
 
-    for (list<int>::iterator i = auxC.begin(); i != auxC.end();)
-    {
-        int prev = *i;
+    for (list<int>::iterator i = auxC.begin(); i !=  auxC.end();){
+     int prev = *i;
         i++;
         // Se houver componentes iguais, o gráfo é cíclico,
-        // entao o grafo tem um circuito
+         // entao o grafo tem um circuito
         if (prev == *i)
             return true;
     }
-    // Se  forem diferentes entre eles, o grafo nao tem circuito
+        // Se  forem diferentes entre eles, o grafo nao tem circuito
     return false;
 }
-
 Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
 {
     Graph *subGrafo = new Graph(this->directed, this->weighted_edge, this->weighted_node);
