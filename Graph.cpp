@@ -290,14 +290,13 @@ void Graph::removeNode(int id) // pfv dps me ajudem a revisar esse removeNode
 bool Graph::searchNode(int id)
 {
     // so verifica se exste o no ali ou nao
-    Node *p = first_node;
-    while (p->getId() != id && p != NULL)
+
+    for (Node *p = this->first_node; p != NULL; p = p->getNextNode())
     {
-        p = p->getNextNode();
-    }
-    if (p != NULL)
-    {
-        return true;
+        if (p->getId() == id)
+        {
+            return true;
+        }
     }
     return false;
 }
@@ -640,12 +639,15 @@ bool Graph::deepthFirstSearch1(int id, int start)
         {
 
             //AUX-BuscaPorProfundidade (G,v)
-            auxDeepthFirstSearch1(verify, p);
-            if (verify[id - 1] && p->getId() != id)
+            if (p->getId() != id)
             {
-                delete[] verify;
-                return true;
+                auxDeepthFirstSearch1(verify, p);
             }
+        }
+        if (verify[id - 1])
+        {
+            delete[] verify;
+            return true;
         }
     }
     delete[] verify;
@@ -821,20 +823,17 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
 {
     Graph *subGrafo = new Graph(this->directed, this->weighted_edge, this->weighted_node);
     //para todo noh da lista faça
-    cout << " parada 1" << endl;
+
     for (int i = 0; i < tam; i++)
     {
-        cout << " parada 2 " << endl;
+
         //incluir noh no subgrafo
-        if (searchNode(listIdNodes[i]))
+        if (this->searchNode(listIdNodes[i]))
         {
             subGrafo->insertNode(listIdNodes[i]);
-            cout << " parada 3 " << endl;
         }
     }
-    cout << endl;
-    cout << " parada 4 " << endl;
-    cout << endl;
+
     Node *p;
     Node *orig;
     Edge *aux;
@@ -842,24 +841,25 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
     //para todo noh do subgrafo,
     for (p = subGrafo->getFirstNode(); p != NULL; p = p->getNextNode())
     {
-        cout << " parada 5 " << endl;
+
         orig = getNode(p->getId());
 
         //verificar as arestas no grafo original.
         for (aux = orig->getFirstEdge(); aux != NULL; aux = aux->getNextEdge())
         {
-            cout << " parada 6 " << endl;
+
             // se a aresta do vertice pra onde ela aponta existir
+            
             verificaSeTem = subGrafo->searchNode(aux->getTargetId());
             if (verificaSeTem)
             {
-                cout << " parada 7 " << endl;
+
                 // incluir a aresta no noh do subgrafo;
                 subGrafo->insertEdge(p->getId(), aux->getTargetId(), aux->getWeight());
+        
             }
         }
     }
-    cout << " parada 8 " << endl;
     // retorna subgrafo
     return subGrafo;
 }
@@ -884,8 +884,6 @@ Graph *Graph::agmKuskal(ofstream &output_file)
 
     Graph *grafoVI;
     grafoVI = this->getVertexInduced(listaNos, tamanho);
-
-    grafoVI->printGraph(output_file);
 
     Graph *grafoAux = new Graph(this->directed, this->weighted_edge, this->weighted_node); //vai vira o grafoVI
 
@@ -917,18 +915,16 @@ Graph *Graph::agmKuskal(ofstream &output_file)
         sup->removeEdge(nohArestas[1], grafoVI->getDirected(), p);
         //adiciona a a resta num grafo auxiliar.
         grafoAux->insertEdge(nohArestas[0], nohArestas[1], nohArestas[2]);
-
-        output_file << "vertice de saida: " << nohArestas[0] << " vertice de entrada: " << nohArestas[1] << " peso: " << nohArestas[2] << endl;
     }
 
     //Organizar a lista;
 
     //Criar |V| subárvores contendo cada uma um nó
     //isolado.
-    Graph *subGrafoNovo = new Graph(this->directed, this->weighted_edge, this->weighted_node);
+    Graph *arvoreGerMin = new Graph(this->directed, this->weighted_edge, this->weighted_node);
     for (sup = grafoVI->getFirstNode(); sup != NULL; sup = sup->getNextNode())
     {
-        subGrafoNovo->insertNode(sup->getId());
+        arvoreGerMin->insertNode(sup->getId());
     }
     //F ¬ Æ
     //Cria lista vazia
@@ -936,7 +932,7 @@ Graph *Graph::agmKuskal(ofstream &output_file)
 
     //contador ¬ 0
     int conta = 0;
-    int numMaxAresta = subGrafoNovo->getOrder() - 1;
+    int numMaxAresta = arvoreGerMin->getOrder() - 1;
     //Enquanto contador < |V|-1 e L 1 Æ faça
     while (conta < numMaxAresta && !lista.empty())
     {
@@ -946,7 +942,7 @@ Graph *Graph::agmKuskal(ofstream &output_file)
         int v2 = distancia_no.second;
         lista.pop_front();
         //Se u e v não estão na mesma subárvore então
-        if (!verificaSubarvore(v1, v2, subGrafoNovo))
+        if (!verificaSubarvore(v1, v2, arvoreGerMin))
         {
 
             //F ¬ F È {(u,v)}
@@ -956,7 +952,7 @@ Graph *Graph::agmKuskal(ofstream &output_file)
             int peso = getWeightFromEdgeNodeCombo(v1, v2, grafoAux);
 
             //Unir as subárvores que contêm u e v.
-            subGrafoNovo->insertEdge(v1, v2, peso);
+            arvoreGerMin->insertEdge(v1, v2, peso);
 
             //contador ¬ contador + 1
             conta++;
@@ -966,24 +962,20 @@ Graph *Graph::agmKuskal(ofstream &output_file)
 
         //fim-enquanto
     }
-    cout << "valor do contador:" << conta << endl;
-    return subGrafoNovo;
+    return arvoreGerMin;
 }
 
 bool Graph::verificaSubarvore(int v1, int v2, Graph *subGrafo)
 {
 
-    bool *verify = new bool[subGrafo->getOrder()];
-    bool *acesso = new bool[subGrafo->getOrder()];
+    bool *verify = new bool[this->order];
+    
     for (Node *p = subGrafo->getFirstNode(); p != NULL; p = p->getNextNode())
     {
-        if (!verify[p->getId() - 1])
-        {
-            verify[p->getId() - 1] = true;
-            acesso[p->getId() - 1] = deepthFirstSearch1(v2, p->getId());
-        }
+        
+            verify[p->getId() - 1] = subGrafo->deepthFirstSearch1(v2, p->getId());
     }
-    return acesso[v1 - 1];
+    return verify[v1 - 1];
 }
 
 int Graph::getWeightFromEdgeNodeCombo(int idNoh, int idAresta, Graph *subGrafo)

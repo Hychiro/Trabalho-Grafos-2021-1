@@ -21,7 +21,7 @@ int main()
     ofstream output_file;
     output_file.open("C://Users//Usuario//Documents//repositorio//Trabalho-Grafos-2021-1//testes.txt");
 
-    Graph *grafo = new Graph(6, true, true, false);
+    Graph *grafo = new Graph(6, false, true, false);
     grafo->insertEdge(1,2,1);
     grafo->insertEdge(2,3,2);
     grafo->insertEdge(3,4,3);
@@ -42,7 +42,9 @@ int main()
     grafo->insertEdge(11,7,0);*/
    
     Graph* subGrafo = grafo->agmKuskal(output_file);
+    output_file<<" Arvore geradora minima"<< endl;
     subGrafo->printGraph(output_file);
+
     int order = grafo->getOrder();
     cout << "Ordem: "<< order << endl;
     grafo->printGraph(output_file);
@@ -51,7 +53,9 @@ int main()
     int x;
     cin>>x;
     Graph* novoGrafo= grafo->caminhamentoDeProfundidade(x);
+
     novoGrafo->printGraph(output_file);
+
     output_file.close();
 
     return 0;
