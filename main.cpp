@@ -117,8 +117,8 @@ int menu()
     cout << "[1] fechoTransitivoIndireto" << endl;
     cout << "[2] Fecho Transitivo Direto" << endl;
     cout << "[3] Caminho Mínimo entre dois vértices - Floyd" << endl;
-    cout << "[4] Árvore Geradora Mínima de Prim" << endl;
-    cout << "[5] Árvore Geradora Mínima de Kruskal" << endl;
+    cout << "[4] Árvore Geradora Mínima de Kruskal" << endl;
+    cout << "[5] Árvore Geradora Mínima de Prim" << endl;
     cout << "[6] Imprimir caminhamento em Profundidade" << endl;
     cout << "[7] Imprimir ordenacao topológica" << endl;
     cout << "[8] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
@@ -299,7 +299,7 @@ int main(int argc, char const *argv[])
     if (input_file.is_open())
     {
 
-        graph = leituraInstancia(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+        graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
     }
     else
         cout << "Unable to open " << argv[1];
