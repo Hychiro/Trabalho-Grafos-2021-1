@@ -859,7 +859,6 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
                 subGrafo->insertEdge(p->getId(), aux->getTargetId(), aux->getWeight());
         
             }
-            cout << " parada 8 " << endl;
         }
     }
     // retorna subgrafo
@@ -1019,7 +1018,7 @@ void Graph::getWeithlessEdge(Graph *subGrafo, int *nohAresta)
 Graph *Graph::agmPrim()
 {
     int tamanho, x;
-    cout << "Digite o numero de vértices que serão adicionados no subgrafo vértice induzido" << endl;
+    cout << "Digite o numero de vertices que serão adicionados no subgrafo vertice induzido" << endl;
     cin >> tamanho;
     int *listaNos = new int[this->order];
     for (int i = 0; i < this->order; i++)
@@ -1028,7 +1027,7 @@ Graph *Graph::agmPrim()
     }
     for (int i = 0; i < tamanho; i++)
     {
-        cout << "Digite o vértice numero " << i + 1 << endl;
+        cout << "Digite o id do vertice numero " << i + 1 << endl;
         cin >> x;
         listaNos[i] = x;
     }
@@ -1049,11 +1048,11 @@ Graph *Graph::agmPrim()
     {
         adicionados[i] = false;
     }
-    adicionados[listaNos[0]] = true;
+    adicionados[x] = true;
 
     std::list<int> vertices; //marca quais vértices ja possuem um caminho
     std::list<int>::iterator k;
-    vertices.push_front(listaNos[0]); //adiciona o primeiro vértice na lista
+    vertices.push_front(x); //adiciona o primeiro vértice na lista
 
     bool todosVerticesAdicionados = false;
 
