@@ -173,7 +173,7 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         //AGM - Kruscal;
         case 4:
         {
-
+            graph->agmKuskal(output_file);
             break;
         }
 

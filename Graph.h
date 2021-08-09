@@ -65,9 +65,15 @@ public:
     int *topologicalSorting();
     bool graphtemCiclo();
     int *componentesConectados();
-    Graph *getVertexInduced(int *listIdNodes);
-    Graph *agmKuskal();
+    Graph *getVertexInduced(int *listIdNodes, int tam);
+
+    Graph *agmKuskal(ofstream &output_file);
+    void getWeithlessEdge(Graph *subGrafo, int *nohAresta);
+    int getWeightFromEdgeNodeCombo(int idNoh, int idAresta, Graph *subGrafo);
+    bool verificaSubarvore(int v1, int v2, Graph *subGrafo);
+
     Graph *agmPrim();
+
     string floydMarshall(int idSource, int idTarget);
     int **constroiFloyd(int tamanho, int **distancia);
     void dijkstra(ofstream &output_file, int idSource, int idTarget);
