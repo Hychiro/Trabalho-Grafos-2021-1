@@ -298,7 +298,7 @@ int main(int argc, char const *argv[])
     if (input_file.is_open())
     {
 
-        graph = leituraInstancia(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+        graph = leitura(input_file, atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
     }
     else
         cout << "Unable to open " << argv[1];

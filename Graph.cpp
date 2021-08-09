@@ -172,6 +172,7 @@ void Graph::insertNode(int id)
         this->last_node->setNextNode(p);
     }
     this->last_node = p;
+    this->last_node->setNextNode(NULL);
     this->order++;
 }
 void Graph::insertAllNodes()
@@ -293,6 +294,7 @@ bool Graph::searchNode(int id)
     Node *p = first_node;
     while (p->getId() != id && p != NULL)
     {
+        cout<<"teste searchnode"<<endl;
         p = p->getNextNode();
     }
     if (p != NULL)
@@ -857,9 +859,9 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
                 // incluir a aresta no noh do subgrafo;
                 subGrafo->insertEdge(p->getId(), aux->getTargetId(), aux->getWeight());
             }
+            cout << " parada 8 " << endl;
         }
     }
-    cout << " parada 8 " << endl;
     // retorna subgrafo
     return subGrafo;
 }
@@ -1050,16 +1052,16 @@ Graph *Graph::agmPrim()
         grafoX->insertNode(p->getId());
     }
 
-    bool adicionados[grafoX->order]; //marca quais vértices ja possuem um caminho
-    for (int i = 0; i < grafoX->order; i++)
+    bool adicionados[this->order]; //marca quais vértices ja possuem um caminho
+    for (int i = 0; i < this->order; i++)
     {
         adicionados[i] = false;
     }
-    adicionados[0] = true;
+    adicionados[listaNos[0]] = true;
 
     std::list<int> vertices; //marca quais vértices ja possuem um caminho
     std::list<int>::iterator k;
-    vertices.push_front(1); //adiciona o primeiro vértice na lista
+    vertices.push_front(listaNos[0]); //adiciona o primeiro vértice na lista
 
     bool todosVerticesAdicionados = false;
 
@@ -1095,7 +1097,7 @@ Graph *Graph::agmPrim()
         vertices.push_front(vertice2->getId());    //adiciona o vertice 2 na lista vertices
         adicionados[vertice2->getId() - 1] = true; //marcar o vertice 2 como adicionado
         int contador = 0;
-        for (int i = 0; i < (grafoX->order); i++) //verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
+        for (int i = 0; i < (this->order); i++) //verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
         {
             if (adicionados[i] == true)
             {
