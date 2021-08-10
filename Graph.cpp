@@ -997,7 +997,6 @@ Graph *Graph::agmKuskal(ofstream &output_file)
         //Se u e v não estão na mesma subárvore então
         if (!verificaSubarvore(v1, v2, arvoreGerMin))
         {
-            output_file << v1 << " -- " << v2 << endl;
             //F ¬ F È {(u,v)}
             //preenche a lista;
             listaAux.push_back(make_pair(v1, v2));
