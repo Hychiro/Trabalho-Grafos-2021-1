@@ -137,7 +137,6 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
 
     switch (selecao)
     {
-
     //fechoTransitivoIndireto;
     case 1:
     {
@@ -156,19 +155,19 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
         graph->fechoTransitivoDireto(output_file, x);
         break;
     }
-    //Caminho mínimo entre dois vértices usando Floyd;
     case 3:
     {
-        cout << "Caminho minimo por Floyd " << endl;
+        output_file << "Caminho minimo por Floyd:: " << endl;
         cout << "Digite o vertice de origem:" << endl;
         int origem;
         cin >> origem;
         cout << "Digite o vertice de destino:" << endl;
         int destino;
         cin >> destino;
-        graph->floydMarshall(origem, destino);
+        graph->floydMarshall(output_file, origem, destino);
         break;
     }
+
     //AGM - Kruscal;
     case 4:
     {
@@ -196,12 +195,14 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
     //Ordenação Topologica;
     case 7:
     {
+
         if (graph->getDirected())
         {
+
             int *ordTop = graph->topologicalSorting();
             if ((ordTop != NULL))
             {
-                output_file << "Ordenação Topologica" << endl;
+                output_file << "Ordenação Topologica:" << endl;
                 for (int i = 0; i < graph->getOrder(); i++)
                 {
                     output_file << ordTop[i];
@@ -210,13 +211,14 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
             }
             else
             {
-                output_file << "Grafo possui ciclo" << endl;
+                output_file << "Grafo possui circuito, nao possui ordenação topologica" << endl;
             }
         }
         else
         {
-            output_file << "grafo não direcionado" << endl;
+            output_file << "Grafo não direcionado -  nao possui ordenação topologica" << endl;
         }
+
         break;
     }
     //Caminho Mínimo entre dois vértices - Dijkstra

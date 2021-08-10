@@ -1,7 +1,6 @@
 #include "Graph.h"
 #include "Node.h"
 #include "Edge.h"
-#include "Graph.h"
 #include <iostream>
 #include <fstream>
 #include <stack>
@@ -13,6 +12,7 @@
 #include <float.h>
 #include <iomanip>
 #include <string>
+
 
 using namespace std;
 
@@ -28,7 +28,7 @@ Graph::Graph(int order, bool directed, bool weighted_edge, bool weighted_node)
     this->directed = directed;
     this->weighted_edge = weighted_edge;
     this->weighted_node = weighted_node;
-    this->conexGraph = false;
+     this->conexGraph = false;
     this->first_node = NULL;
     this->last_node = NULL;
     this->number_edges = 0;
@@ -103,7 +103,7 @@ void Graph::printGraph(ofstream &output_file)
         }
         output_file <<"}"<<endl;
     }
-    output_file << endl;
+        output_file << endl;
     output_file << endl;
 }
 
@@ -323,68 +323,100 @@ Node *Graph::getNode(int id)
 
 //Function that prints a set of edges belongs breadth tree
 
-string Graph::floydMarshall(int idSource, int idTarget)
+void Graph::floydMarshall(ofstream &output_file, int idSource, int idTarget)
 {
     int tamanho = getOrder();
-    aux.str(string());
-    Node *aux_node = first_node;
-    int **distancia;
+    Node* aux_node = first_node;
+    int**distancia = new int*[this->order];
     distancia = constroiFloyd(tamanho, distancia);
-
-    aux << "caminho minimo entre os pares" << idSource << "e" << idTarget << "=" << distancia[idTarget - 1][idTarget - 1] << endl;
-
-    for (int i = 0; i < tamanho; i++)
+    
+    output_file << "O menor caminho entre o No[" << idSource << "] e o No[" << idTarget << "] e: [" << distancia[idSource-1][idTarget-1] << "]"<<endl;
+    
+    Node *aux_node2 = this->first_node;
+    output_file<< " matriz das Distâncias mais curtas entre cada par de vértices:"<< endl;
+    for (int i = 0; i < this->order + 1; i++) 
     {
-        aux << "[";
-        for (int j = 0; j < tamanho; j++)
-        {
-            if (distancia[i][j] != INFINITY)
-            {
-                aux << distancia[i][j] << ".";
-            }
-
-            else
-            {
-                aux << distancia[i][j] << ".";
-            }
-            if (j == tamanho - 1)
-                aux << "]\n";
+        if (i == 0)
+            output_file << setw(7) << " ";
+        else {
+            output_file << setw(7) << aux_node2->getId();
+            aux_node2 = aux_node2->getNextNode();
         }
     }
-    return aux.str();
+    output_file<< endl;
+    aux_node2= this->first_node;
+    for (int i = 0; i < this->order; i++) 
+    {
+        for (int j = 0; j < this->order + 1; j++) {
+            if (j == 0) 
+            {
+                output_file << setw(7) << " | "<< aux_node2->getId()<< " | ";;
+                aux_node2 = aux_node2->getNextNode();
+            }
+            else {
+                if (distancia[i][j - 1] == INT_MAX/2)
+                    output_file << setw(7) << "INF" <<" | ";
+                else
+                    output_file << setw(7) << distancia[i][j - 1] << " | ";
+            }
+        }
+        output_file << endl;
+    }
 }
-int **Graph::constroiFloyd(int tamanho, int **distancia)
+int**Graph::constroiFloyd(int tamanho, int **distancia)
 {
     // funcao para utilizar a lista de adjacencia e para usar o algoritmo de Floyd
-    //falta lista de adjacencia aqui
-
-    distancia = new int *[tamanho];
+    distancia = new int*[tamanho];
     for (int k = 0; k < tamanho; k++)
     {
-        distancia[k] = new int[tamanho];
+        distancia[k] = new int[this->order];
+    }
+    Node* aux_node1 = this->first_node;
+    Node* aux_node2;
+    int peso_aresta = 1;
+
+    //matriz  com os valores de cada aresta entre os nos
+    for (int i = 0; aux_node1 != NULL; aux_node1 = aux_node1->getNextNode(), i++) {
+        aux_node2 = this->first_node;
+
+        for (int j = 0; aux_node2 != NULL; aux_node2 = aux_node2->getNextNode(), j++) 
+        {
+            Edge *aux = aux_node1->hasEdgeBetween(aux_node2->getId());
+
+            if(this->weighted_edge && aux != NULL)
+                peso_aresta  = aux->getWeight();
+
+            if (aux_node1->getId() == aux_node2->getId())
+                distancia[i][j] = 0;
+
+            else if(aux!=NULL)
+
+                distancia[i][j] = peso_aresta;
+
+            else
+                distancia[i][j] = INT_MAX/2;
+        }
     }
     for (int c = 0; c < tamanho; c++)
     {
         // Escolhendo todos os vértices como fonte, um por um
         for (int i = 0; i < tamanho; i++)
         {
-            // Escolhendo todos os vértices como destino
             if (i != c)
-            {
+            {// Escolhendo todos os vértices como destino
                 for (int j = 0; j < tamanho; j++)
                 {
-                    // Se o vértice k estiver no caminho mais curto de i para j, em seguida, atualize o valor de dist [i] [j]
-                    if (distancia[i][c] != INFINITY && distancia[c][j] != INFINITY)
-                    {
-                        if (distancia[i][j] > distancia[i][c] + distancia[c][j] || distancia[i][j] == INFINITY)
-                            distancia[i][j] = distancia[i][c] + distancia[c][j];
-                    }
+                    //Se o vértice k estiver no caminho mais curto de i para j, em seguida, atualize o valor de dist [i] [j]
+                    if (distancia[i][j] > distancia[i][c] + distancia[c][j] && distancia[i][c] + distancia[i][j]>0)
+                           distancia[i][j] = distancia[i][c] + distancia[c][j];
                 }
+
             }
         }
     }
     return distancia;
 }
+
 void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
 {
     int distancia[this->order];           //vetor que faz uma analogia entre id e distancia
@@ -493,6 +525,7 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
         }
     }
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////FECHO TRANSITIVO E BUSCAS///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -766,43 +799,39 @@ Graph *Graph::caminhamentoDeProfundidade(int x)
 
 // função que imprime uma classificação topológica
 int *Graph::topologicalSorting()
-{
-    int *vetor = new int(this->order); //alocando o vetor para ordenaçao topologica
+{   
+    int *vetor = new int(this->order);//alocando o vetor para ordenaçao topologica
     if (this->graphtemCiclo())
-        // verifica se o grafo tem circuito ou nao
-        return NULL;
-    else
-    {
-        int i = 0;
-        Edge *auxAres;
-        Node *auxNo;
-        queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
-        //procurando nos com enttrada =0
-        for (auxNo = this->first_node; auxNo != NULL; auxNo = auxNo->getNextNode())
-        {
-            if (auxNo->getInDegree() == 0) // se entrada  = 0
-            {
-                filaTopologica.push(auxNo); //coloca os nos corretos na fila
-            }
-        }
-        while (!filaTopologica.empty()) // enquanto fila e vazia
-        {
-            vetor[i] = filaTopologica.front()->getId();       //coloca o id do no a ser removido da fila
-            auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no
-            filaTopologica.pop();                             //remve da fila
-            while (auxAres != NULL)
-            {
-                auxNo = this->getNode(auxAres->getTargetId()); //pega o no vizinho
-                auxNo->decrementInDegree();                    //decrementa a entrada
-                if (auxNo->getInDegree() == 0)
-                { //se a entrada = 0
-                    filaTopologica.push(auxNo);
+    // verifica se o grafo tem circuito ou nao
+    return NULL;
+    else{
+            int i =0;
+            Edge *auxAres;
+            Node *auxNo;
+            queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
+            //procurando nos com enttrada =0
+            for (auxNo=this->first_node;auxNo!=NULL;auxNo = auxNo->getNextNode())
+            {   if (auxNo->getInDegree()==0)// se entrada  = 0
+                {
+                    filaTopologica.push(auxNo); //coloca os nos corretos na fila
                 }
             }
-            i++;
+            while (!filaTopologica.empty())// enquanto fila e vazia
+            {
+                vetor[i] = filaTopologica.front()->getId(); //coloca o id do no a ser removido da fila
+                auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no 
+                filaTopologica.pop(); //remve da fila
+                while (auxAres != NULL){
+                    auxNo = this->getNode(auxAres->getTargetId());//pega o no vizinho
+                    auxNo->decrementInDegree(); //decrementa a entrada
+                    if(auxNo->getInDegree()==0){ //se a entrada = 0
+                    filaTopologica.push(auxNo);
+                }
+            } i++;
         }
-        return vetor; //retorna a classificação topologica em um vetor
+        return vetor;  //retorna a classificação topologica em um vetor
     }
+    
 }
 //verifica se grafo tem ciclo
 bool Graph::graphtemCiclo()
@@ -812,22 +841,20 @@ bool Graph::graphtemCiclo()
     for (int i = 0; i < this->order; i++)
     {
         auxC.push_back(i);
-    } // Então a lista é classificada
+    }// Então a lista é classificada
     auxC.sort();
 
-    for (list<int>::iterator i = auxC.begin(); i != auxC.end();)
-    {
-        int prev = *i;
+    for (list<int>::iterator i = auxC.begin(); i !=  auxC.end();){
+     int prev = *i;
         i++;
         // Se houver componentes iguais, o gráfo é cíclico,
-        // entao o grafo tem um circuito
+         // entao o grafo tem um circuito
         if (prev == *i)
             return true;
     }
-    // Se  forem diferentes entre eles, o grafo nao tem circuito
+        // Se  forem diferentes entre eles, o grafo nao tem circuito
     return false;
 }
-
 Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
 {
     Graph *subGrafo = new Graph(this->directed, this->weighted_edge, this->weighted_node);
@@ -842,7 +869,6 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
             subGrafo->insertNode(listIdNodes[i]);
         }
     }
-
     Node *p;
     Node *orig;
     Edge *aux;
@@ -850,7 +876,6 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
     //para todo noh do subgrafo,
     for (p = subGrafo->getFirstNode(); p != NULL; p = p->getNextNode())
     {
-
         orig = getNode(p->getId());
 
         //verificar as arestas no grafo original.
@@ -862,7 +887,6 @@ Graph *Graph::getVertexInduced(int *listIdNodes, int tam)
             verificaSeTem = subGrafo->searchNode(aux->getTargetId());
             if (verificaSeTem)
             {
-
                 // incluir a aresta no noh do subgrafo;
                 subGrafo->insertEdge(p->getId(), aux->getTargetId(), aux->getWeight());
             }
@@ -1067,11 +1091,7 @@ Graph *Graph::agmPrim()
     int tamanho, x;
     cout << "Digite o numero de vértices de '1' a " << this->order << " que serão adicionados no subgrafo vértice induzido" << endl;
     cin >> tamanho;
-    int *listaNos = new int[this->order];
-    for (int i = 0; i < this->order; i++)
-    {
-        listaNos[i] = -1;
-    }
+    int *listaNos = new int[tamanho];
     for (int i = 0; i < tamanho; i++)
     {
         cout << "Digite o vértice numero " << i + 1 << ": " << endl;
@@ -1095,33 +1115,41 @@ Graph *Graph::agmPrim()
     {
         adicionados[i] = false;
     }
-    adicionados[listaNos[0]] = true;
+    adicionados[x] = true;
 
     std::list<int> vertices; //marca quais vértices ja possuem um caminho
     std::list<int>::iterator k;
-    vertices.push_front(listaNos[0]); //adiciona o primeiro vértice na lista
+    vertices.push_front(x); //adiciona o primeiro vértice na lista
 
     bool todosVerticesAdicionados = false;
+    int a=1;
+
 
     while (todosVerticesAdicionados == false) //repetir até ter um caminho para todos os vértices
     {
-        Node *vertice1; //nó que vai armazenar o vértice de onde vai sair a aresta
-        Node *vertice2; //nó que vai armazenar o vértice que a aresta vai chegar
+        cout<<endl<<endl<<endl<<"entrando no while pela "<<a<<" vez"<<endl;
+        a++;
+        int vertice1; //nó que vai armazenar o vértice de onde vai sair a aresta
+        int vertice2; //nó que vai armazenar o vértice que a aresta vai chegar
         int menorCusto = 999999999;
         for (k = vertices.begin(); k != vertices.end(); k++) //percorre todos vértices da lista
         {
             Node *verticeAnalisado = grafoVI->getNode(*k);
+            cout<<"olhando o no "<<*k<<endl;
             for (Edge *it = verticeAnalisado->getFirstEdge(); it != NULL; it = it->getNextEdge()) //percorre todas arestas de grafoVI
             {
                 int verticeAdjacente = it->getTargetId(); //pega o vértice alvo dessa aresta
-                int custo_aresta = it->getWeight();       //pega o custa dessa aresta
+                int custo_aresta = it->getWeight();       //pega o custo dessa aresta
+                cout<<"olhando a aresta:   "<<*k<<" -- "<<verticeAdjacente<<endl;
 
                 if (adicionados[verticeAdjacente - 1] == false) //se o vértice alvo não foi adicionado
                 {
+                    cout<<verticeAdjacente<<"  ainda nao foi adicionado nesse grafo"<<endl;
                     if (menorCusto > custo_aresta) //se o custo dessa aresta for menor de todas que ja forram analisados
                     {
-                        vertice1 = verticeAnalisado;                   //lembra do nó que esta saindo essa aresta
-                        vertice2 = grafoVI->getNode(verticeAdjacente); //lembra do nó onde esta chegando essa arresta
+                        cout<<"a aresta:   "<<*k<<" -- "<<verticeAdjacente<<"    tem o menor peso dessa iteracao ate agr" <<endl;
+                        vertice1 = verticeAnalisado->getId();                   //lembra do nó que esta saindo essa aresta
+                        vertice2 = verticeAdjacente; //lembra do nó onde esta chegando essa arresta
                         menorCusto = custo_aresta;                     //lembra do custo dessa aresta
                     }
                 }
@@ -1129,11 +1157,12 @@ Graph *Graph::agmPrim()
         }
 
         //adiciona uma aresta entre o vértice 1 e 2 que possui custo = menorCusto
-        grafoX->insertEdge(vertice1->getId(), vertice2->getId(), menorCusto);
+        cout<<"inserindo a aresta:   "<<vertice1<<" -- "<<vertice2 <<endl;
+        grafoX->insertEdge(vertice1, vertice2, menorCusto);
 
-        vertices.push_front(vertice2->getId());    //adiciona o vertice 2 na lista vertices
-        adicionados[vertice2->getId() - 1] = true; //marcar o vertice 2 como adicionado
-        int contador = 1;
+        vertices.push_front(vertice2);    //adiciona o vertice 2 na lista vertices
+        adicionados[vertice2 - 1] = true; //marcar o vertice 2 como adicionado
+        int contador = 0;
         for (int i = 0; i < (this->order); i++) //verificar se todos vértices ja foram adicionados se sim todosVerticesAdicionados=true
         {
             if (adicionados[i] == true)
