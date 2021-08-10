@@ -488,6 +488,7 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
                     caminho.push_front(a);
                     a = vertice_predecessor[a - 1];
                 }
+                output_file << "Custo da Distancia de "<<idSource<< " até "<<idTarget<<" é: "<<distancia[idTarget-1]<<endl;
                 output_file << idSource;
                 for (int i = 0; !(caminho.empty()); i++)
                 {
@@ -506,6 +507,7 @@ void Graph::dijkstra(ofstream &output_file, int idSource, int idTarget)
                     caminho.push_front(a);
                     a = vertice_predecessor[a - 1];
                 }
+                output_file << "Custo da Distancia de "<<idSource<< " até "<<idTarget<<" é: "<<distancia[idTarget-1]<<endl;
                 output_file << idSource;
                 for (int i = 0; !(caminho.empty()); i++)
                 {
@@ -1085,7 +1087,7 @@ void Graph::getWeithlessEdge(int *nohAresta)
     }
 }
 
-Graph *Graph::agmPrim()
+Graph *Graph::agmPrim(ofstream &output_file)
 {
     int tamanho, x;
     cout << "Digite o numero de vértices de 1 a " << this->order << " que serão adicionados no subgrafo vértice induzido" << endl;
@@ -1122,6 +1124,8 @@ Graph *Graph::agmPrim()
 
     bool todosVerticesAdicionados = false;
 
+    int custoTotal=0;
+
 
     while (todosVerticesAdicionados == false) //repetir até ter um caminho para todos os vértices
     {
@@ -1151,6 +1155,8 @@ Graph *Graph::agmPrim()
         //adiciona uma aresta entre o vértice 1 e 2 que possui custo = menorCusto
         grafoX->insertEdge(vertice1, vertice2, menorCusto);
 
+        custoTotal=custoTotal+menorCusto;
+
         vertices.push_front(vertice2);    //adiciona o vertice 2 na lista vertices
         adicionados[vertice2 - 1] = true; //marcar o vertice 2 como adicionado
         int contador = 0;
@@ -1167,6 +1173,8 @@ Graph *Graph::agmPrim()
         }
     }
     delete[] listaNos;
+
+    output_file<<"Peso da Arvore Geradora Minima: "<<custoTotal<<endl;
 
     return grafoX;
 }

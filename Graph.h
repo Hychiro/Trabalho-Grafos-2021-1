@@ -71,7 +71,7 @@ class Graph{
         int getWeightFromEdgeNodeCombo(int idNoh, int idAresta, Graph *subGrafo);
         bool verificaSubarvore(int v1, int v2, Graph *subGrafo);
 
-        Graph *agmPrim();
+        Graph *agmPrim(ofstream &output_file);
 
         void floydMarshall(ofstream &output_file, int idSource, int idTarget);
         int**constroiFloyd(int tamanho, int **distancia);
