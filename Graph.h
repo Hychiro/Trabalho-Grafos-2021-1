@@ -62,7 +62,7 @@ class Graph{
         void auxDeepthFirstSearch(bool verify[], Graph *novoGrafo, Node *v);
 
         Graph* caminhamentoDeProfundidade(int x);
-        int * topologicalSorting();
+        void topologicalSorting(ofstream &output_file);
         bool graphtemCiclo();
         Graph *getVertexInduced(int *listIdNodes, int tam);
         

@@ -12,7 +12,6 @@
 #include <float.h>
 #include <iomanip>
 #include <string>
-#include <bits/stdc++.h>
 
 
 using namespace std;
@@ -406,7 +405,7 @@ int**Graph::constroiFloyd(int tamanho, int **distancia)
             {// Escolhendo todos os vértices como destino
                 for (int j = 0; j < tamanho; j++)
                 {
-                    //Se o vértice k estiver no caminho mais curto de i para j, em seguida, atualize o valor de dist [i] [j]
+                    //Se o vértice c estiver no caminho mais curto de i para j, em seguida, atualize o valor de dist [i] [j]
                     if (distancia[i][j] > distancia[i][c] + distancia[c][j] && distancia[i][c] + distancia[i][j]>0)
                            distancia[i][j] = distancia[i][c] + distancia[c][j];
                 }
@@ -798,42 +797,50 @@ Graph *Graph::caminhamentoDeProfundidade(int x)
     deepthFirstSearch(novoGrafo, x);
     return novoGrafo;
 }
-
 // função que imprime uma classificação topológica
-int *Graph::topologicalSorting()
-{   
-    int *vetor = new int(this->order);//alocando o vetor para ordenaçao topologica
-    if (this->graphtemCiclo())
-    // verifica se o grafo tem circuito ou nao
-    return NULL;
-    else{
-            int i =0;
+
+void Graph::topologicalSorting(ofstream &output_file)
+{   list<Node*> listaNos; 
+    list<int> listaTopologica;
+    if (this->graphtemCiclo())// verifica se o grafo e aciclico ou nao
+    {
+        output_file <<" Se Grafo possui ciclos, nao possui ordenação topologica"<<endl;
+    }
+    else{ // adaptando algoritimo kahn's
             Edge *auxAres;
             Node *auxNo;
-            queue<Node *> filaTopologica; //fila auxiliar para os nos de origem
             //procurando nos com enttrada =0
             for (auxNo=this->first_node;auxNo!=NULL;auxNo = auxNo->getNextNode())
             {   if (auxNo->getInDegree()==0)// se entrada  = 0
                 {
-                    filaTopologica.push(auxNo); //coloca os nos corretos na fila
+                    listaNos.push_back(auxNo); //coloca os nos corretos na fila
                 }
             }
-            while (!filaTopologica.empty())// enquanto fila e vazia
+            while (!listaNos.empty())// enquanto lista e vazia 
             {
-                vetor[i] = filaTopologica.front()->getId(); //coloca o id do no a ser removido da fila
-                auxAres = filaTopologica.front()->getFirstEdge(); // obtendo a primeiro no 
-                filaTopologica.pop(); //remve da fila
-                while (auxAres != NULL){
-                    auxNo = this->getNode(auxAres->getTargetId());//pega o no vizinho
+                Node *aux = listaNos.front();
+                listaNos.pop_front(); //remove da lista
+                listaTopologica.push_back(aux->getId());
+                for(auxAres =aux->getFirstEdge(); auxAres!=NULL;auxAres=auxAres->getNextEdge())
+                {
+                    auxNo = this->getNode(auxAres->getTargetId()); //pega o no vizinho
                     auxNo->decrementInDegree(); //decrementa a entrada
-                    if(auxNo->getInDegree()==0){ //se a entrada = 0
-                    filaTopologica.push(auxNo);
+                    if (auxNo->getInDegree()==0) //se a entrada = 0
+                    {    
+                        listaNos.push_back(auxNo);
+                    }
+                    
                 }
-            } i++;
+            }
+            //imprimindo ordenaçao a classificação topologica 
+            output_file << "Ordenação Topologica :" << endl;
+            for(list<int>::iterator i = listaTopologica.begin(); i != listaTopologica.end(); i++)
+            {
+                    if(listaTopologica.size() == this->getOrder())
+                    output_file << (*i) << endl;
+            }
+           
         }
-        return vetor;  //retorna a classificação topologica em um vetor
-    }
-    
 }
 //verifica se grafo tem ciclo
 bool Graph::graphtemCiclo()
@@ -973,6 +980,7 @@ Graph *Graph::agmKuskal(ofstream &output_file)
     {
         arvoreGerMin->insertNode(sup->getId());
     }
+    
     //F ¬ Æ
     //Cria lista vazia
     list<pair<int, int>> listaAux;
@@ -999,7 +1007,7 @@ Graph *Graph::agmKuskal(ofstream &output_file)
         //Se u e v não estão na mesma subárvore então
         if (!verificaSubarvore(v1, v2, arvoreGerMin))
         {
-            //F ¬ F È {(u,v)}
+             //F ¬ F È {(u,v)}
             //preenche a lista;
             listaAux.push_back(make_pair(v1, v2));
             //busca o peso da aresta
