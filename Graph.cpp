@@ -67,7 +67,6 @@ Graph::~Graph()
 
 void Graph::printGraph(ofstream &output_file)
 {
-    output_file << "Printano o Grafo" << endl;
     Node *p = this->first_node;
     Edge *aux = p->getFirstEdge();
     if (!directed)
