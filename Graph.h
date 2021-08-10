@@ -55,6 +55,7 @@ public:
     void fechoTransitivoDireto(ofstream &output_file, int id);
     void fechoTransitivoIndireto(ofstream &output_file, int id);
 
+
     bool deepthFirstSearch1(int id, int start);
     void deepthFirstSearch(Graph *novoGrafo, int start);
 
@@ -68,7 +69,7 @@ public:
     Graph *getVertexInduced(int *listIdNodes, int tam);
 
     Graph *agmKuskal(ofstream &output_file);
-    void getWeithlessEdge(Graph *subGrafo, int *nohAresta);
+    void getWeithlessEdge(int *nohAresta);
     int getWeightFromEdgeNodeCombo(int idNoh, int idAresta, Graph *subGrafo);
     bool verificaSubarvore(int v1, int v2, Graph *subGrafo);
 

@@ -122,10 +122,9 @@ int menu()
     cout << "[6] Imprimir caminhamento em Profundidade" << endl;
     cout << "[7] Imprimir ordenacao topológica" << endl;
     cout << "[8] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
-    cout << "[9] Algoritmo Guloso Randomizado " << endl;
+    cout << "[9] Printando o Grafo " << endl;
     cout << "[10] Algoritmo Guloso Randomizado Reativo" << endl;
-    cout << "[11] Printando o Grafo" << endl;
-    cout << "[12] Fazendo busca por profundidade" << endl;
+    cout << "[11] Algoritmo Guloso Randomizado" << endl;
     cout << "[0] Sair" << endl;
 
     cin >> selecao;
@@ -133,115 +132,117 @@ int menu()
     return selecao;
 }
 
-
 void selecionar(int selecao, Graph *graph, ofstream &output_file)
 {
 
     switch (selecao)
     {
 
-        //fechoTransitivoIndireto;
-        case 1:
-        {
-            int x;
-            cout << "Digite o id o noh a ser pesquisado: ";
-            cin >> x;
-            graph->fechoTransitivoIndireto(output_file,x);
-            break;
-        }
-        //fechoTransitivoDireto;
-        case 2:
-        {
-            int x;
-            cout << "Digite o id o noh a ser pesquisado: ";
-            cin >> x;
-            graph->fechoTransitivoDireto(output_file, x);
-            break;
-        }
-        //Caminho mínimo entre dois vértices usando Floyd;
-        case 3:
-        {   cout<<"Caminho minimo por Floyd "<< endl;
-            cout<<"Digite o vertice de origem:"<< endl;
-            int origem;
-            cin>>origem;
-            cout<<"Digite o vertice de destino:"<<endl;
-            int destino;
-            cin>> destino;
-            graph->floydMarshall(origem,destino);
-            break;
-        }
-        //AGM - Kruscal;
-        case 4:
-        {
-            graph->agmKuskal(output_file);
-            break;
-        }
-
-        //AGM Prim;
-        case 5:
-        {
-            Graph *grafoX=graph->agmPrim();
-            grafoX->printGraph(output_file);
+    //fechoTransitivoIndireto;
+    case 1:
+    {
+        int x;
+        cout << "Digite o id o noh a ser pesquisado: ";
+        cin >> x;
+        graph->fechoTransitivoIndireto(output_file, x);
         break;
-        }
-
-        //Busca em Profundidade;
-        case 6:
-        {
+    }
+    //fechoTransitivoDireto;
+    case 2:
+    {
+        int x;
+        cout << "Digite o id o noh a ser pesquisado: ";
+        cin >> x;
+        graph->fechoTransitivoDireto(output_file, x);
+        break;
+    }
+    //Caminho mínimo entre dois vértices usando Floyd;
+    case 3:
+    {
+        cout << "Caminho minimo por Floyd " << endl;
+        cout << "Digite o vertice de origem:" << endl;
+        int origem;
+        cin >> origem;
+        cout << "Digite o vertice de destino:" << endl;
+        int destino;
+        cin >> destino;
+        graph->floydMarshall(origem, destino);
+        break;
+    }
+    //AGM - Kruscal;
+    case 4:
+    {
+        Graph *novoSubGrafo = graph->agmKuskal(output_file);
+        novoSubGrafo->printGraph(output_file);
+        break;
+    }
+    //AGM Prim;
+    case 5:
+    {
+        Graph *grafoX = graph->agmPrim();
+        grafoX->printGraph(output_file);
+        break;
+    }
+    //Imprimir caminhamento em Profundidade
+    case 6:
+    {
         int x;
         cout << "Digite o id o noh a por onde começara o caminhamento: ";
         cin >> x;
-        Graph* novoGrafo= graph->caminhamentoDeProfundidade(x);
+        Graph *novoGrafo = graph->caminhamentoDeProfundidade(x);
         novoGrafo->printGraph(output_file);
         break;
-        }
-        //Ordenação Topologica;
-        case 7:
+    }
+    //Ordenação Topologica;
+    case 7:
+    {
+        if (graph->getDirected())
         {
-         if(graph->getDirected())
+            int *ordTop = graph->topologicalSorting();
+            if ((ordTop != NULL))
+            {
+                output_file << "Ordenação Topologica" << endl;
+                for (int i = 0; i < graph->getOrder(); i++)
                 {
-                    int* ordTop = graph->topologicalSorting();
-                    if ((ordTop != NULL))
-                    {
-                        output_file << "Ordenação Topologica" << endl;
-                        for (int i = 0; i < graph->getOrder(); i++)
-                        {
-                            output_file<< ordTop[i];
-                            output_file<<endl;
-                        }           
-                    }
-                    else{
-                        output_file <<"Grafo possui ciclo"<<endl;
-                    }
-                }else{
-                        output_file<<"grafo não direcionado"<<endl;
+                    output_file << ordTop[i];
+                    output_file << endl;
                 }
-            break;
+            }
+            else
+            {
+                output_file << "Grafo possui ciclo" << endl;
+            }
         }
-        case 8:
+        else
         {
-        int x,y;
+            output_file << "grafo não direcionado" << endl;
+        }
+        break;
+    }
+    //Caminho Mínimo entre dois vértices - Dijkstra
+    case 8:
+    {
+        int x, y;
         cout << "Digite o id Source: ";
         cin >> x;
         cout << "Digite o id Target: ";
         cin >> y;
-        graph->dijkstra(output_file, x ,y);
+        graph->dijkstra(output_file, x, y);
         break;
-        }
-        case 11:
-        {
+    }
+    //Printa grafo
+    case 9:
+    {
 
         graph->printGraph(output_file);
 
         break;
-        }
-        default:
-        {
+    }
+    default:
+    {
         cout << " Error!!! invalid option!!" << endl;
-    
-        }  
-    }  
-    
+    }
+    }
 }
 
 int mainMenu(ofstream &output_file, Graph *graph)
