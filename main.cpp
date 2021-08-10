@@ -122,10 +122,9 @@ int menu()
     cout << "[6] Imprimir caminhamento em Profundidade" << endl;
     cout << "[7] Imprimir ordenacao topológica" << endl;
     cout << "[8] Caminho Mínimo entre dois vértices - Dijkstra" << endl;
-    cout << "[9] Algoritmo Guloso Randomizado " << endl;
+    cout << "[9] Printando o Grafo " << endl;
     cout << "[10] Algoritmo Guloso Randomizado Reativo" << endl;
-    cout << "[11] Printando o Grafo" << endl;
-    cout << "[12] Fazendo busca por profundidade" << endl;
+    cout << "[11] Algoritmo Guloso Randomizado" << endl;
     cout << "[0] Sair" << endl;
 
     cin >> selecao;
@@ -204,30 +203,30 @@ void selecionar(int selecao, Graph *graph, ofstream &output_file)
             break;
         }
 
-        case 8:
-        {
-        int x,y;
+      //Caminho Mínimo entre dois vértices - Dijkstra
+    case 8:
+    {
+        int x, y;
         cout << "Digite o id Source: ";
         cin >> x;
         cout << "Digite o id Target: ";
         cin >> y;
-        graph->dijkstra(output_file, x ,y);
+        graph->dijkstra(output_file, x, y);
         break;
-        }
-        case 11:
-        {
+    }
+    //Printa grafo
+    case 9:
+    {
 
         graph->printGraph(output_file);
 
         break;
-        }
-        default:
-        {
+    }
+    default:
+    {
         cout << " Error!!! invalid option!!" << endl;
-    
-        }  
-    }  
-    
+    }
+    }
 }
 
 int mainMenu(ofstream &output_file, Graph *graph)
