@@ -1207,3 +1207,29 @@ Graph *Graph::agmPrim(ofstream &output_file)
 
     return grafoX;
 }
+
+///// Inicia Arvore Geradora Rotação Minima
+
+void Graph::geraArvRotMin( int cores, float densidade ){
+    this->clearArestas(); //limpa todas as arestas no grafo com cores 
+    num_cores= cores;
+    densidade = densidade;
+
+    //inicializa as arestas
+    for( int i=0 ; i<num_vertices ; i++ ){
+        for( int j=0 ; j<num_vertices ; j++ ){
+            MatrizAdjacente[i][j].setNumCores(num_cores);
+        }
+    }
+}
+
+//remove as cores associadas a aresta, e as cores que foram pintadas na aresta)
+void Graph::clearArestas(){
+    for( int i=0 ; i<num_vertices ; i++ ){
+        for( int j=0 ; j<num_vertices ; j++ ){
+            for( int k=0 ; k<num_cores ; k++ ){
+                MatrizAdjacente[i][j].removeCor(k);//
+            }
+        }
+    }
+}

@@ -15,7 +15,7 @@ Edge::Edge(int target_id){
     this->weight = 1;
 }
 Edge::Edge(){
-    this->ativa = false;
+    this->colorida = false;
     this->cor_possivel = NULL;
     this->cor_ativa = NULL;
 }
@@ -83,15 +83,57 @@ void Edge::setNumCores(int num){
         cor_possivel[i] = false;
         cor_ativa[i] = false;
     }
-    ativa = false;
+    colorida = false;
 }
-// adiciona uma cor na aresta
+// relaciona uma cor na aresta
 void Edge::addCor(int cor){
     if(cor_possivel!=NULL && cor<cores){
         cor_possivel[cor] = true;
-        this->ativa = true;
+        this->colorida = true;
     }
     else{
         cout << "Nao foi possivel colorir a aresta"<< endl;       
+    }
+}
+//colore uma aresta 
+void Edge::colorir(int cor){
+    if(cor_ativa!=NULL && cor<cores && colorida && cor_possivel!=NULL && cor_possivel[cor] ){
+        cor_ativa[cor] = true;
+    }
+    else{
+        cout << "Nao foi possivel colorir a aresta"<< endl;         
+    }
+}
+void Edge::colorir(int* cor){
+    if(cor_ativa!=NULL && colorida && cor_possivel!=NULL ){
+        for( int i =0 ; i<cores ; i++){
+            if( cor[i]<0 && cor_possivel[i] ){
+                cor_ativa[i] = true;
+                return;
+            }
+        }
+    }
+    else{
+        cout << "Nao foi possivel colorir a aresta"<< endl;  
+        
+    }
+}
+/**
+Limpa todas as cores pintadas e associadas na aresta
+**/
+void Edge::removeCor(int cor){
+    if(cor_ativa!=NULL && cor<cores){
+        cor_ativa[cor] = false;
+        cor_possivel[cor] = false;
+        ativa = false;
+        for( int i=0 ; i<cores ; i++ ){
+            if( cor_ativa[t] ){
+                ativa = true;
+                return;
+            }
+        }
+    }
+    else{
+        cout << "\n"<< cor_ativa << ", " << cor << ", " << cores << endl;
     }
 }

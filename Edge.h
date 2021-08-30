@@ -17,6 +17,7 @@ class Edge{
         float weight;
         bool * cor_possivel;
         bool * cor_ativa;
+        bool colorida;
         int cores;
 
     public:
@@ -34,8 +35,11 @@ class Edge{
         void setWeight(float weight); 
         void setNumCores(int num);
         void addCor(int cor);
+        void colorir(int cor);
+        void colorir(int* cor);
+        void removeCor(int cor);
 
-        bool ativa;
+        bool colorida;
 
 }; 
 

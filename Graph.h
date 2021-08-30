@@ -8,6 +8,7 @@
 #ifndef GRAPH_H_INCLUDED
 #define GRAPH_H_INCLUDED
 #include "Node.h"
+#include "Edge.h"
 #include <fstream>
 #include <stack>
 #include <list>
@@ -35,7 +36,7 @@ class Graph{
         float densidade;
         bool * solucao_otima;
         bool generated;
-        Edge ** MatrizAdjacente;
+        
 
     public:
         //Constructor
@@ -59,6 +60,7 @@ class Graph{
         bool searchNode(int id);
         Node* getNode(int id);
         void insertAllNodes();
+        Edge** MatrizAdjacente;
 
         void fechoTransitivoDireto(ofstream &output_file, int id);
         void fechoTransitivoIndireto(ofstream &output_file, int id);
@@ -86,7 +88,9 @@ class Graph{
         void dijkstra(ofstream &output_file,int idSource, int idTarget);
         void printGraph(ofstream &output_file);
         
-        //methods phase1
+        //methods phase2
+        void geraArvRotMin(int cores, float densidade);
+        void clearArestas();
         float greed();
         float greedRandom();
         float greedRactiveRandom();
