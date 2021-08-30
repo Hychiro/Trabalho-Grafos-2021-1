@@ -48,6 +48,20 @@ Graph::Graph(bool directed, bool weighted_edge, bool weighted_node)
     this->number_edges = 0;
 }
 
+Graph::Graph(int node){
+    this->num_arestas = 0;
+    this->num_cores = 0;
+    this->densidade = 0;
+    this->generated = false;
+    this->num_vertices = node;
+    this->solucao_otima = NULL;
+    MatrizAdjacente = new Edge *[node];
+    for( int i=0 ; i<num_vertices ; i++ )
+    {
+        MatrizAdjacente[i] = new Edge [num_vertices];
+    }
+}
+
 // Destructor
 Graph::~Graph()
 {
@@ -61,6 +75,13 @@ Graph::~Graph()
         Node *aux_node = next_node->getNextNode();
         delete next_node;
         next_node = aux_node;
+    }
+    for( int i=0 ; i<num_vertices ; i++ ){
+        delete (MatrizAdjacente[i]);
+    }
+    delete MatrizAdjacente;
+    if( solucao_otima!=NULL ){
+        delete solucao_otima;
     }
 }
 
@@ -820,11 +841,11 @@ void Graph::topologicalSorting(ofstream &output_file)
             {
                 Node *aux = listaNos.front();
                 listaNos.pop_front(); //remove da lista
-                listaTopologica.push_back(aux->getId());
+                listaTopologica.push_back(aux->getId()); //coloca na lista auxiliar
                 for(auxAres =aux->getFirstEdge(); auxAres!=NULL;auxAres=auxAres->getNextEdge())
                 {
                     auxNo = this->getNode(auxAres->getTargetId()); //pega o no vizinho
-                    auxNo->decrementInDegree(); //decrementa a entrada
+                    auxNo->decrementInDegree(); //decrementa o grau de entrada
                     if (auxNo->getInDegree()==0) //se a entrada = 0
                     {    
                         listaNos.push_back(auxNo);

@@ -29,11 +29,19 @@ class Graph{
         bool conexGraph;
         Node* first_node;
         Node* last_node;
+        int num_vertices;
+        int num_cores;
+        int num_arestas;
+        float densidade;
+        bool * solucao_otima;
+        bool generated;
+        Edge ** MatrizAdjacente;
 
     public:
         //Constructor
         Graph(int order, bool directed, bool weighted_edge, bool weighted_node);
         Graph(bool directed, bool weighted_edge, bool weighted_node);
+        Graph(int node);
         //Destructor
         ~Graph();
         //Getters

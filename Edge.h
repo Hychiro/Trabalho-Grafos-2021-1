@@ -15,10 +15,14 @@ class Edge{
         int target_id;
         Edge* next_edge;
         float weight;
+        bool * cor_possivel;
+        bool * cor_ativa;
+        int cores;
 
     public:
         // Constructor
         Edge(int target_id);
+        Edge();
         // Destructor
         ~Edge();
         // Getters
@@ -28,6 +32,10 @@ class Edge{
         // Setters
         void setNextEdge(Edge* edge);
         void setWeight(float weight); 
+        void setNumCores(int num);
+        void addCor(int cor);
+
+        bool ativa;
 
 }; 
 
